@@ -1,0 +1,33 @@
+.sideBarWrapper {
+  height: calc(100vh - 75px);
+  overflow-y: scroll;
+}
+
+.sideBarWrapper svg {
+  font-size: 18px;
+  color: #646464;
+  margin-left: 5px;
+}
+
+.subSidebarNavs {
+  margin: 5px 15px;
+  padding: 5px 10px;
+  border-radius: 7px;
+}
+
+.NavsWrapper a {
+  font-size: 14px;
+}
+
+.sidebarNavs a {
+  color: #000000;
+  display: block;
+}
+
+.activeNav {
+  background-color: var(--blue-100);
+}
+
+.activeNav {
+  color: #ffff !important;
+}

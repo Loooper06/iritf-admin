@@ -1,0 +1,11 @@
+.node__root > circle {
+  fill: #0081c9;
+}
+
+.node__branch > circle {
+  fill: #86e5ff;
+}
+
+.node__leaf > circle {
+  fill: green;
+}

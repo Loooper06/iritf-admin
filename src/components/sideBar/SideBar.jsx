@@ -1,0 +1,203 @@
+import { Link, useLocation } from "react-router-dom";
+import { Col, Container, Row } from "react-bootstrap";
+import MenuIcon from "@mui/icons-material/Menu";
+import styles from "./SideBar.module.css";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Typography,
+} from "@mui/material";
+import cls from "classnames";
+import NewspaperOutlinedIcon from "@mui/icons-material/NewspaperOutlined";
+import MilitaryTechOutlinedIcon from "@mui/icons-material/MilitaryTechOutlined";
+import EditCalendarOutlinedIcon from "@mui/icons-material/EditCalendarOutlined";
+import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
+import OndemandVideoOutlinedIcon from "@mui/icons-material/OndemandVideoOutlined";
+import Diversity1OutlinedIcon from "@mui/icons-material/Diversity1Outlined";
+import SportsTennisOutlinedIcon from "@mui/icons-material/SportsTennisOutlined";
+import AutoAwesomeMosaicOutlinedIcon from "@mui/icons-material/AutoAwesomeMosaicOutlined";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useState } from "react";
+
+const SideBar = () => {
+  const location = useLocation();
+  const sideNavsRoutes = [
+    {
+      id: "1",
+      title: "اخبار",
+      icon: <NewspaperOutlinedIcon />,
+      path: "/news",
+      children: [
+        { id: "1.1", title: "افزودن خبر", path: "/news/create" },
+        { id: "1.2", title: "لیست اخبار", path: "/news/list" },
+      ],
+    },
+    {
+      id: "2",
+      title: "رنکینگ ها",
+      icon: <MilitaryTechOutlinedIcon />,
+      path: "/ranks",
+      children: [
+        { id: "2.1", title: "افزودن رنکینگ", path: "/ranks/create" },
+        { id: "2.2", title: "لیست رنکینگ ها", path: "/ranks/list" },
+      ],
+    },
+    {
+      id: "3",
+      title: "تقویم ها",
+      icon: <EditCalendarOutlinedIcon />,
+      path: "/calendars",
+      children: [
+        { id: "3.1", title: "افزودن تقویم", path: "/calendars/create" },
+        { id: "3.2", title: "لیست تقویم ها", path: "/calendars/list" },
+      ],
+    },
+    {
+      id: "4",
+      title: "فرم ها",
+      icon: <InsertDriveFileOutlinedIcon />,
+      path: "/forms",
+      children: [
+        {
+          id: "4.1",
+          title: "افزودن فرم",
+          path: "/forms/create",
+        },
+        { id: "4.3", title: "لیست فرم ها", path: "/forms/list" },
+      ],
+    },
+    {
+      id: "5",
+      title: "ویدیو ها",
+      icon: <OndemandVideoOutlinedIcon />,
+      path: "/videos",
+      children: [
+        {
+          id: "5.1",
+          title: "افزودن ویدیو",
+          path: "/videos/create",
+        },
+        {
+          id: "5.2",
+          title: "لیست ویدیو ها",
+          path: "/videos/list",
+        },
+      ],
+    },
+    {
+      id: "6",
+      title: "کمیته ها",
+      icon: <Diversity1OutlinedIcon />,
+      path: "/committees",
+      children: [
+        {
+          id: "6.1",
+          title: "افزودن کمیته",
+          path: "/committees/create",
+        },
+        {
+          id: "6.2",
+          title: "لیست کمیته ها",
+          path: "/committees/list",
+        },
+      ],
+    },
+    {
+      id: "7",
+      title: "مسابقات",
+      icon: <SportsTennisOutlinedIcon />,
+      path: "/matches",
+      children: [
+        {
+          id: "7.1",
+          title: "افزودن مسابقه",
+          path: "/matches/create",
+        },
+        {
+          id: "7.2",
+          title: "لیست مسابقه ها",
+          path: "/matches/list",
+        },
+      ],
+    },
+    {
+      id: "8",
+      title: "گزارش تصویری",
+      icon: <AutoAwesomeMosaicOutlinedIcon />,
+      path: "/image-reports",
+      children: [
+        {
+          id: "8.1",
+          title: "افزودن گزارش",
+          path: "/image-reports/create",
+        },
+        {
+          id: "8.2",
+          title: "لیست گزارش ها",
+          path: "/image-reports/list",
+        },
+      ],
+    },
+  ];
+  const [expanded, setExpanded] = useState(false);
+
+  const handleChange = (panel) => (isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
+  return (
+    <Container fluid className={styles.sideBarWrapper}>
+      <Row>
+        <Col className="pt-1 border-bottom text-secondary d-flex justify-content-start align-items-center">
+          <MenuIcon />
+          <h5 className="ms-2 mt-1">منو</h5>
+        </Col>
+      </Row>
+      <Row>
+        {sideNavsRoutes.map((item) => (
+          <Col xs={12} className="px-0" key={item.id}>
+            <Accordion
+              sx={{ width: "100%", margin: "1px 0" }}
+              expanded={expanded === item.id}
+              onChange={handleChange(item.id)}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1bh-content"
+                id="panel1bh-header"
+              >
+                <Typography
+                  sx={{ width: "100%", flexShrink: 1, fontSize: "14px" }}
+                >
+                  <span>{item.icon}</span>
+                  {item.title}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <ul className={cls("p-0 m-0", styles.NavsWrapper)}>
+                  {item.children.map((childNav) => (
+                    <Link to={childNav.path} key={childNav.id}>
+                      <li
+                        style={{ listStyleType: "disc" }}
+                        className={
+                          location.pathname.match(childNav.path)
+                            ? cls(styles.subSidebarNavs, styles.activeNav)
+                            : styles.subSidebarNavs
+                        }
+                      >
+                        {childNav.title}
+                      </li>
+                    </Link>
+                  ))}
+                </ul>
+              </AccordionDetails>
+            </Accordion>
+          </Col>
+        ))}
+      </Row>
+    </Container>
+  );
+};
+
+export default SideBar;
