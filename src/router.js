@@ -21,7 +21,11 @@ const router = [
   { path: "/", element: <Home /> },
   { path: "/login", element: <SignIn /> },
   { path: "/news/create", element: <CreateNews /> },
-  { path: "/news/list", element: <NewsList /> },
+  {
+    path: "/news/list",
+    element: <NewsList />,
+    children: [{ path: ":id" }],
+  },
   { path: "/ranks/create", element: <CreateRank /> },
   { path: "/ranks/list", element: <RanksList /> },
   { path: "/calendars/create", element: <CreateCalendar /> },
