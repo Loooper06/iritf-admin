@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Tree from "react-d3-tree";
-import styles from "./News.module.css";
+import styles from "../../shared/assets/Tree.module.css";
 import { Button, Chip } from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -13,7 +13,7 @@ const CreateNews = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState({});
   const [title, setTitle] = useState("");
-  const [images, setImages] = useState();
+  const [images, setImages] = useState([]);
   const [tags, setTags] = useState([]);
   const [text, setText] = useState([]);
   const [short_text, setShort_text] = useState([]);
