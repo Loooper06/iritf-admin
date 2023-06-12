@@ -39,9 +39,9 @@ const CreateRank = () => {
       });
   }
 
-  // useEffect(() => {
-  //   getCategories();
-  // }, []);
+  useEffect(() => {
+    getCategories();
+  }, []);
 
   const addTagHandler = (event) => {
     if (event.code === "Enter") {

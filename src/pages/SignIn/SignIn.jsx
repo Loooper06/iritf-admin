@@ -25,6 +25,7 @@ const SignIn = () => {
   }, []);
 
   const loginHandler = async () => {
+    console.log(adminUsername, adminPassword)
     const result = await axios
       .post(
         `${process.env.REACT_APP_API_URL}/users/auth/sign-in-panel`,
@@ -40,7 +41,7 @@ const SignIn = () => {
         timer: 1500,
         timerProgressBar: true,
       });
-      navigate("/");
+      navigate("/", {replace:true});
     } else {
       Swal.fire({
         text: result,

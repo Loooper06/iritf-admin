@@ -9,28 +9,47 @@ import Paper from "@mui/material/Paper";
 import moment from "jalali-moment";
 import ReactPaginate from "react-paginate";
 import { Avatar, Button } from "@mui/material";
+import { Modal, Carousel } from 'antd';
+import DefaultImage from "../../shared/assets/images/default-image.jpeg"
 
-export default function DataTable({ data, origin }) {
+import styles from "./DataTable.module.css"
+
+export default function DataTable({ data, origin, faOrigin, deleteNewsHandler }) {
   const [selectedItem, setSelectedItem] = React.useState({});
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const contentStyle = {
+    margin: 0,
+    height: '160px',
+    color: '#fff',
+    lineHeight: '160px',
+    textAlign: 'center',
+    background: '#364d79',
+  };
   function createData(_id, image, title, category, createdAt) {
     return { _id, image, title, category, createdAt };
   }
 
   const rows = [];
-  data.map((item) => {
-    rows.push(
-      createData(
-        item._id,
-        item.imagesURL[0],
-        item.title,
-        item.category,
-        item.createdAt
-      )
-    );
-  });
+  if (data !== undefined || data !== null){
+    if (data.length){
+      data.map((item) => {
+        rows.push(
+          createData(
+            item._id,
+            item.imagesURL && item.imagesURL[0],
+            item.title,
+            item.category,
+            item.createdAt
+          )
+        );
+      });
+    }
+  }
 
   const viewHandler = (ID) => {
-    const item = rows.find((item) => item._id === ID);
+    const item = data.find((item) => item._id === ID);
+    setSelectedItem(item);
+    setModalVisible(true);
   };
 
   function Items({ currentItems }) {
@@ -65,12 +84,84 @@ export default function DataTable({ data, origin }) {
                 <Button variant="contained" color="warning" className="mx-2">
                   ویرایش
                 </Button>
-                <Button variant="contained" color="error">
+                <Button variant="contained" color="error"
+                  onClick={() => deleteNewsHandler(row._id)}
+                >
                   حذف
                 </Button>
               </TableCell>
             </TableRow>
           ))}
+          {Object.keys(selectedItem).length !== 0 &&
+            <Modal
+              title={`مشاهده ${faOrigin}`}
+              visible={modalVisible}
+              onCancel={() => setModalVisible(false)}
+              footer={null}
+              width={1000}
+              style={{ top: 40 }}
+            >
+              <div className={styles.itemData}>
+                <div className={styles.carouselContainer}>
+                  <div className={styles.carousel}>
+                    <Carousel>
+                      {selectedItem.imagesURL ? selectedItem.imagesURL.map((imageUrl) => (
+                        <div className={styles.contentStyle} style={contentStyle} key={imageUrl}>
+                          <img className={styles.carouselImage} src={imageUrl} alt="carousel-item" />
+                        </div>
+                      )): 
+                        <div className={styles.contentStyle} style=
+                        {contentStyle}>
+                          <img
+                            alt="default-image"
+                            style={{"width":"100%", "height":"400px", "object-fit":"cover"}}
+                            src={DefaultImage}
+                          />
+                        </div>
+                      }
+                    </Carousel>
+                  </div>
+                </div>
+                <h3 style={{"marginBottom":"24px"}}>{selectedItem.title}</h3>
+                <div className="d-flex align-items-center">
+                  <h6 className="px-2 pt-1">تاریخ ایجاد :</h6>
+                  {moment(selectedItem.createdAt).locale("fa").format("jYYYY/jMM/jDD")}
+                </div>
+                <hr />
+                <div>
+                  <h5>دسته بندی :</h5>
+                  <h6 style={{"margin":"0"}}>{selectedItem.category.name}</h6>
+                </div>
+                <hr />
+                <div>
+                  <h5>برچسب ها :</h5>   
+                  <ol>
+                    {selectedItem.tags.map((tag) => (
+                      <li style={{"listStyle":"unset"}} key={tag}>{tag}</li>
+                    ))}
+                  </ol>
+                </div>
+                {selectedItem.short_text && (
+                  <>
+                    <hr />
+                    <div style={{"marginBottom":"16px"}} className="short-text">
+                      <h5>متن کوتاه خبر :</h5>
+                      <div style={{"marginTop":"12px", "lineHeight":"1.8"}} dangerouslySetInnerHTML={{ __html: selectedItem.short_text }} />
+                    </div>
+                  </>
+                )}
+                {selectedItem.text && (
+                  <>
+                    <hr />
+                    <div style={{"marginBottom":"16px", "lineHeight":"1.8"}} className="text">
+                      <h5>متن خبر :</h5>
+                      <div style={{"marginTop":"12px"}}  dangerouslySetInnerHTML={{ __html: selectedItem.text }} />
+                    </div>
+                  </>
+                )}
+              </div>
+            </Modal>
+          }
       </>
     );
   }

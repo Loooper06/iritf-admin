@@ -27,6 +27,40 @@ const NewsList = () => {
     }
   }
 
+  const deleteNewsHandler = (newsId) => {
+    Swal.fire({
+      text: " خبر حذف شود ؟",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ثبت",
+      cancelButtonText: "لغو",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const createResult = await axios
+          .delete(`${process.env.REACT_APP_API_URL}/admin/news/remove/${newsId}`, {
+            withCredentials: true,
+          })
+          .then((res) => res.data)
+          .catch((err) => err.response.data);
+
+        if (createResult.statusCode === 200) {
+          Swal.fire({
+            text: createResult.data.message,
+            icon: "success",
+          });
+          getNewsList();
+        } else {
+          Swal.fire({
+            text: createResult.message,
+            icon: "error",
+          });
+        }
+      }
+    })
+  }
+
   useEffect(() => {
     setReload((prev) => !prev);
   }, []);
@@ -89,7 +123,7 @@ const NewsList = () => {
         </div>
       </Row>
       <Row className="mt-4">
-        {news && <DataTable data={news} origin="news" />}
+        {news && <DataTable data={news} origin="news" faOrigin="خبر" deleteNewsHandler={deleteNewsHandler}/>}
       </Row>
     </Container>
   );
