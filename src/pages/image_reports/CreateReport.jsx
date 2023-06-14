@@ -28,7 +28,7 @@ const CreateReport = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "گزارش" && item.parent === null) return item;
+        if (item.name === "اخبار"&&  item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else
@@ -38,9 +38,9 @@ const CreateReport = () => {
       });
   }
 
-  // useEffect(() => {
-  //   getCategories();
-  // }, []);
+  useEffect(() => {
+    getCategories();
+  }, []);
 
   const addTagHandler = (event) => {
     if (event.code === "Enter") {
@@ -87,13 +87,13 @@ const CreateReport = () => {
         Data.append("category", selectedCategory._id);
 
         for (const image of images) {
-          Data.append("files", image);
+          Data.append("images", image);
         }
 
         Data.append("tags", tags);
 
         const createResult = await axios
-          .post(`${process.env.REACT_APP_API_URL}/admin/image-reports/create`, Data, {
+          .post(`${process.env.REACT_APP_API_URL}/admin/reports/create`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
           })

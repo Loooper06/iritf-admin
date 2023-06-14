@@ -28,6 +28,40 @@ const MatchesList = () => {
     }
   }
 
+  const deleteMatchHandler = (matchId) => {
+    Swal.fire({
+      text: " مسابقه حذف شود ؟",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ثبت",
+      cancelButtonText: "لغو",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const createResult = await axios
+          .delete(`${process.env.REACT_APP_API_URL}/admin/matches/remove/${matchId}`, {
+            withCredentials: true,
+          })
+          .then((res) => res.data)
+          .catch((err) => err.response.data);
+
+        if (createResult.statusCode === 200) {
+          Swal.fire({
+            text: createResult.data.message,
+            icon: "success",
+          });
+          getMatchesList();
+        } else {
+          Swal.fire({
+            text: createResult.message,
+            icon: "error",
+          });
+        }
+      }
+    })
+  }
+
   useEffect(() => {
     setReload((prev) => !prev);
   }, []);
@@ -90,7 +124,7 @@ const MatchesList = () => {
         </div>
       </Row>
       <Row className="mt-4">
-        {matches && <DataTable data={matches} origin="matches" />}
+        {matches && <DataTable data={matches} origin="matches" faOrigin="مسابقه" deleteHandler={deleteMatchHandler} />}
       </Row>
     </Container>
   );

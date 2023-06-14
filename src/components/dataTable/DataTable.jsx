@@ -11,10 +11,11 @@ import ReactPaginate from "react-paginate";
 import { Avatar, Button } from "@mui/material";
 import { Modal, Carousel } from 'antd';
 import DefaultImage from "../../shared/assets/images/default-image.jpeg"
+import { Link } from 'react-router-dom';
 
 import styles from "./DataTable.module.css"
 
-export default function DataTable({ data, origin, faOrigin, deleteNewsHandler }) {
+export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
   const [selectedItem, setSelectedItem] = React.useState({});
   const [modalVisible, setModalVisible] = React.useState(false);
   const contentStyle = {
@@ -36,7 +37,7 @@ export default function DataTable({ data, origin, faOrigin, deleteNewsHandler })
         rows.push(
           createData(
             item._id,
-            item.imagesURL && item.imagesURL[0],
+            item.imagesURL ? item.imagesURL[0] : item.imageURL ? item.imageURL : undefined,
             item.title,
             item.category,
             item.createdAt
@@ -81,11 +82,13 @@ export default function DataTable({ data, origin, faOrigin, deleteNewsHandler })
                 >
                   مشاهده
                 </Button>
-                <Button variant="contained" color="warning" className="mx-2">
-                  ویرایش
-                </Button>
+                <Link to={`${row._id}`}>
+                  <Button variant="contained" color="warning" className="mx-2">
+                    ویرایش
+                  </Button>
+                </Link>
                 <Button variant="contained" color="error"
-                  onClick={() => deleteNewsHandler(row._id)}
+                  onClick={() => deleteHandler(row._id)}
                 >
                   حذف
                 </Button>

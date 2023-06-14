@@ -1,6 +1,8 @@
 import SignIn from "./pages/SignIn/SignIn.jsx";
 import CalendarsList from "./pages/calendars/CalendarsList.jsx";
 import CreateCalendar from "./pages/calendars/CreateCalendar.jsx";
+import ClubsList from "./pages/clubs/ClubsList.jsx";
+import CreateClub from "./pages/clubs/CreateClub.jsx";
 import CommitteesList from "./pages/committees/CommitteesList.jsx";
 import CreateCommittee from "./pages/committees/CreateCommittee.jsx";
 import CreateForm from "./pages/froms/CreateForm.jsx";
@@ -11,6 +13,7 @@ import ReportsList from "./pages/image_reports/ReportsList.jsx";
 import CreateMatch from "./pages/matches/CreateMatch.jsx";
 import MatchesList from "./pages/matches/MatchesList.jsx";
 import CreateNews from "./pages/news/CreateNews.jsx";
+import EditNews from "./pages/news/EditNews.jsx";
 import NewsList from "./pages/news/NewsList.jsx";
 import CreateRank from "./pages/ranks/CreateRank.jsx";
 import RanksList from "./pages/ranks/RanksList.jsx";
@@ -24,6 +27,10 @@ const router = [
   {
     path: "/news/list",
     element: <NewsList />,
+  },
+  {
+    path: "/news/list",
+    element: <EditNews />,
     children: [{ path: ":id" }],
   },
   { path: "/ranks/create", element: <CreateRank /> },
@@ -38,6 +45,8 @@ const router = [
   { path: "/committees/list", element: <CommitteesList /> },
   { path: "/matches/create", element: <CreateMatch /> },
   { path: "/matches/list", element: <MatchesList /> },
+  { path: "/clubs/create", element: <CreateClub /> },
+  { path: "/clubs/list", element: <ClubsList /> },
   { path: "/image-reports/create", element: <CreateReport /> },
   { path: "/image-reports/list", element: <ReportsList /> },
 ];

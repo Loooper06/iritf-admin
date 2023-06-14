@@ -123,7 +123,7 @@ const NewsList = () => {
         </div>
       </Row>
       <Row className="mt-4">
-        {news && <DataTable data={news} origin="news" faOrigin="خبر" deleteNewsHandler={deleteNewsHandler}/>}
+        {news && <DataTable data={news} origin="news" faOrigin="خبر" deleteHandler={deleteNewsHandler} />}
       </Row>
     </Container>
   );

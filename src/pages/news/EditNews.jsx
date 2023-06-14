@@ -1,22 +1,27 @@
 import { Col, Container, Form, Row } from "react-bootstrap";
-import { useEffect, useRef, useState } from "react";
-import { Button, Chip } from "@mui/material";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
-import styles from "../../shared/assets/Tree.module.css";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Tree from "react-d3-tree";
+import styles from "../../shared/assets/Tree.module.css";
+import { Button, Chip } from "@mui/material";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { Link } from 'react-router-dom';
 
-const CreateForm = () => {
+import { useParams } from 'react-router-dom';
+
+const EditNews = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState({});
   const [title, setTitle] = useState("");
   const [images, setImages] = useState([]);
-  const [files, setFiles] = useState([]);
   const [tags, setTags] = useState([]);
+  const [text, setText] = useState([]);
+  const [short_text, setShort_text] = useState([]);
 
-  const tagInput = useRef();
-
+  const { id } = useParams();
 
   async function getCategories() {
     const getResult = await axios
@@ -28,7 +33,7 @@ const CreateForm = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "فرم ها" && item.parent === null) return item;
+        if (item.name === "اخبار" &&  item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else
@@ -38,8 +43,44 @@ const CreateForm = () => {
       });
   }
 
+  async function getNews() {
+    const parseText = (text) => {
+      const parser = new DOMParser();
+      const textHTML = parser.parseFromString(text, 'text/html');
+      const p = textHTML.querySelector('p');
+      const actualText = p.textContent;
+      return actualText;
+    }
+
+    const getResult = await axios
+      .get(`${process.env.REACT_APP_API_URL}/admin/news/list/${id}`, {
+        withCredentials: true,
+      })
+      .then((res) => res.data)
+      .catch((err) => err.response);
+
+    if (getResult.statusCode === 200) {
+      const { title, category, tags, images, text, short_text } = getResult.data.news;
+      const correctShortText = parseText(short_text);
+      const correctText = parseText(text);
+      setTitle(title);
+      setSelectedCategory(category);
+      setImages(images);
+      setTags(tags);
+      setText(correctText);
+      setShort_text(correctShortText);
+    } else
+      Swal.fire({
+        text: getResult.message,
+        icon: "error",
+      });
+  }
+
+  const tagInput = useRef();
+
   useEffect(() => {
     getCategories();
+    getNews();
   }, []);
 
   const addTagHandler = (event) => {
@@ -71,9 +112,9 @@ const CreateForm = () => {
     }
   };
 
-  const createFormsHandler = () => {
+  const updateNewsHandler = () => {
     Swal.fire({
-      text: "اطلاعات ثبت شود ؟",
+      text: "تغییرات ثبت شود ؟",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -85,26 +126,19 @@ const CreateForm = () => {
         const Data = new FormData();
         Data.append("title", title);
         Data.append("category", selectedCategory._id);
-
-        for (const image of images) {
-          Data.append("files", image);
-        }
-
-        for (const file of files) {
-          Data.append("files", file);
-        }
-
         Data.append("tags", tags);
+        Data.append("text", text);
+        Data.append("short_text", short_text);
 
         const createResult = await axios
-          .post(`${process.env.REACT_APP_API_URL}/admin/forms/create`, Data, {
+          .patch(`${process.env.REACT_APP_API_URL}/admin/news/update/${id}`, Data, {
             withCredentials: true,
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: { "Content-Type": "application/json" },
           })
           .then((res) => res.data)
           .catch((err) => err.response.data);
 
-        if (createResult.statusCode === 201) {
+        if (createResult.statusCode === 200) {
           Swal.fire({
             text: createResult.data.message,
             icon: "success",
@@ -122,7 +156,7 @@ const CreateForm = () => {
   return (
     <Container fluid className="mb-5">
       <Row>
-        <SectionTitle title="افزودن فرم" />
+        <SectionTitle title="ویرایش خبر" />
       </Row>
       <Row className="mt-3">
         <Col xs={3}>
@@ -132,16 +166,6 @@ const CreateForm = () => {
             className="solid_input"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-          />
-        </Col>
-        <Col xs={3}>
-          <Form.Label htmlFor="fromsImage">تصویر فرم :</Form.Label>
-          <Form.Control
-            type="file"
-            id="fromsImage"
-            className="mt-1"
-            multiple
-            onChange={(e) => setImages(e.target.files)}
           />
         </Col>
         <Col xs={3}>
@@ -166,18 +190,31 @@ const CreateForm = () => {
             ))}
           </div>
         </Col>
-        <Col xs={12}>
-          <Col xs={3} style={{"margin":"20px 0"}}>
-            <Form.Label htmlFor="fromsFiles">فایل فرم (pdf.) :</Form.Label>
-            <Form.Control
-              type="file"
-              accept=".pdf"
-              id="fromsFiles"
-              className="mt-1"
-              multiple
-              onChange={(e) => setFiles(e.target.files)}
+        <Col xs={6} className="mt-4">
+          <label>متن خبر :</label>
+          <div className="mt-3">
+            <CKEditor
+              editor={ClassicEditor}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                setText(data);
+              }}
+              data = {text}
             />
-          </Col>
+          </div>
+        </Col>
+        <Col xs={6} className="mt-4">
+          <label>متن کوتاه خبر :</label>
+          <div className="mt-3">
+            <CKEditor
+              editor={ClassicEditor}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                setShort_text(data);
+              }}
+              data={short_text}
+            />
+          </div>
         </Col>
         <Col xs={6} className="mt-4">
           <label>دسته بندی :</label>
@@ -208,14 +245,24 @@ const CreateForm = () => {
             variant="contained"
             color="success"
             size="large"
-            onClick={createFormsHandler}
+            onClick={updateNewsHandler}
           >
-            ایجاد فرم
+            ویرایش خبر
           </Button>
+          <Link to={'/news/list'}>
+            <Button
+              variant="contained"
+              className="mx-3"
+              color="error"
+              size="large"
+            >
+              بازگشت
+            </Button>
+          </Link>
         </Col>
       </Row>
     </Container>
   );
 };
 
-export default CreateForm;
+export default EditNews;

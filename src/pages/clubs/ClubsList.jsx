@@ -7,19 +7,19 @@ import DataTable from "../../components/dataTable/DataTable";
 import { Button } from "@mui/material";
 
 
-const CalendarsList = () => {
-  const [calendars, setCalendars] = useState([]);
+const ClubsList = () => {
+  const [clubs, setClubs] = useState([]);
   const [search, setSearch] = useState("");
   const [reload, setReload] = useState(false);
 
-  async function getCalendarsList() {
+  async function getClubsList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/calendars/list`, {
+      .get(`${process.env.REACT_APP_API_URL}/admin/clubs/list`, {
         withCredentials: true,
       })
       .then((res) => res.data)
       .catch((err) => err.response.data);
-    if (result.statusCode === 200) setCalendars(result.data.calendars);
+    if (result.statusCode === 200) setClubs(result.data.matches);
     else {
       Swal.fire({
         text: result.message,
@@ -28,9 +28,9 @@ const CalendarsList = () => {
     }
   }
 
-  const deleteCalendarHandler = (calendarId) => {
+  const deleteClubHandler = (clubId) => {
     Swal.fire({
-      text: " تقویم حذف شود ؟",
+      text: " باشگاه حذف شود ؟",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -40,7 +40,7 @@ const CalendarsList = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const createResult = await axios
-          .delete(`${process.env.REACT_APP_API_URL}/admin/calendars/remove/${calendarId}`, {
+          .delete(`${process.env.REACT_APP_API_URL}/admin/clubs/remove/${clubId}`, {
             withCredentials: true,
           })
           .then((res) => res.data)
@@ -51,7 +51,7 @@ const CalendarsList = () => {
             text: createResult.data.message,
             icon: "success",
           });
-          getCalendarsList();
+          getClubsList();
         } else {
           Swal.fire({
             text: createResult.message,
@@ -67,18 +67,18 @@ const CalendarsList = () => {
   }, []);
 
   useEffect(() => {
-    getCalendarsList();
+    getClubsList();
   }, [reload]);
 
   const searchHandler = async () => {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/calendars/list/search`, {
+      .get(`${process.env.REACT_APP_API_URL}/admin/clubs/list/search`, {
         withCredentials: true,
         params: { search },
       })
       .then((res) => res.data)
       .catch((err) => err.response.data);
-    if (result.statusCode === 200) setCalendars(result.data.calendars);
+    if (result.statusCode === 200) setClubs(result.data.matches);
     else {
       Swal.fire({
         text: result.message,
@@ -90,7 +90,7 @@ const CalendarsList = () => {
   return (
     <Container fluid className="mb-5 px-4">
       <Row>
-        <SectionTitle title="لیست تقویم ها" />
+        <SectionTitle title="لیست باشگاه ها" />
       </Row>
       <Row className="mt-3">
         <label>جستجو :</label>
@@ -124,10 +124,10 @@ const CalendarsList = () => {
         </div>
       </Row>
       <Row className="mt-4">
-        {calendars && <DataTable data={calendars} origin="calendars" faOrigin="تقویم" deleteHandler={deleteCalendarHandler} />}
+        {clubs && <DataTable data={clubs} origin="matches" faOrigin="باشگاه" deleteHandler={deleteClubHandler} />}
       </Row>
     </Container>
   );
 };
 
-export default CalendarsList;
+export default ClubsList;

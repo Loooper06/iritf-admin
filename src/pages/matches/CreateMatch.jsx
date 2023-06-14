@@ -33,7 +33,7 @@ const CreateMatch = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "مسابقه" && item.parent === null) return item;
+        if (item.name === "اخبار" && item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else
@@ -43,9 +43,9 @@ const CreateMatch = () => {
       });
   }
 
-  // useEffect(() => {
-  //   getCategories();
-  // }, []);
+  useEffect(() => {
+    getCategories();
+  }, []);
 
   const addTagHandler = (event) => {
     if (event.code === "Enter") {

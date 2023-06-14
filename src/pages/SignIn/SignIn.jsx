@@ -25,7 +25,6 @@ const SignIn = () => {
   }, []);
 
   const loginHandler = async () => {
-    console.log(adminUsername, adminPassword)
     const result = await axios
       .post(
         `${process.env.REACT_APP_API_URL}/users/auth/sign-in-panel`,

@@ -29,7 +29,7 @@ const CreateRank = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "رنکینگ" && item.parent === null) return item;
+        if (item.name === "رنکینگ ها" && item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else
@@ -141,7 +141,6 @@ const CreateRank = () => {
             type="file"
             id="ranksImage"
             className="mt-1"
-            multiple
             onChange={(e) => setImage(e.target.files)}
           />
         </Col>

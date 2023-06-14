@@ -28,6 +28,40 @@ const RanksList = () => {
     }
   }
 
+  const deleteRankHandler = (rankId) => {
+    Swal.fire({
+      text: " رنکینگ حذف شود ؟",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ثبت",
+      cancelButtonText: "لغو",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const createResult = await axios
+          .delete(`${process.env.REACT_APP_API_URL}/admin/ranks/remove/${rankId}`, {
+            withCredentials: true,
+          })
+          .then((res) => res.data)
+          .catch((err) => err.response.data);
+
+        if (createResult.statusCode === 200) {
+          Swal.fire({
+            text: createResult.data.message,
+            icon: "success",
+          });
+          getRanksList();
+        } else {
+          Swal.fire({
+            text: createResult.message,
+            icon: "error",
+          });
+        }
+      }
+    })
+  }
+
   useEffect(() => {
     setReload((prev) => !prev);
   }, []);
@@ -90,7 +124,7 @@ const RanksList = () => {
         </div>
       </Row>
       <Row className="mt-4">
-        {ranks && <DataTable data={ranks} origin="ranks" />}
+        {ranks && <DataTable data={ranks} origin="ranks" faOrigin="رنکینگ" deleteHandler={deleteRankHandler}/>}
       </Row>
     </Container>
   );

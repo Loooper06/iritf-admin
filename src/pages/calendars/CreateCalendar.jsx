@@ -29,7 +29,7 @@ const CreateCalendar = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "تقویم" && item.parent === null) return item;
+        if (item.name === "تقویم ها" &&  item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else
@@ -39,9 +39,9 @@ const CreateCalendar = () => {
       });
   }
 
-  // useEffect(() => {
-  //   getCategories();
-  // }, []);
+  useEffect(() => {
+    getCategories();
+  }, []);
 
   const addTagHandler = (event) => {
     if (event.code === "Enter") {

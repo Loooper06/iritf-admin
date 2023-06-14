@@ -14,7 +14,7 @@ const ReportsList = () => {
 
   async function getReportsList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/image-reports/list`, {
+      .get(`${process.env.REACT_APP_API_URL}/admin/reports/list`, {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -28,6 +28,40 @@ const ReportsList = () => {
     }
   }
 
+  const deleteReportHandler = (reportId) => {
+    Swal.fire({
+      text: " ریپورت حذف شود ؟",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ثبت",
+      cancelButtonText: "لغو",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const createResult = await axios
+          .delete(`${process.env.REACT_APP_API_URL}/admin/reports/remove/${reportId}`, {
+            withCredentials: true,
+          })
+          .then((res) => res.data)
+          .catch((err) => err.response.data);
+
+        if (createResult.statusCode === 200) {
+          Swal.fire({
+            text: createResult.data.message,
+            icon: "success",
+          });
+          getReportsList();
+        } else {
+          Swal.fire({
+            text: createResult.message,
+            icon: "error",
+          });
+        }
+      }
+    })
+  }
+
   useEffect(() => {
     setReload((prev) => !prev);
   }, []);
@@ -38,7 +72,7 @@ const ReportsList = () => {
 
   const searchHandler = async () => {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/image-reports/list/search`, {
+      .get(`${process.env.REACT_APP_API_URL}/admin/reports/list/search`, {
         withCredentials: true,
         params: { search },
       })
@@ -90,7 +124,7 @@ const ReportsList = () => {
         </div>
       </Row>
       <Row className="mt-4">
-        {reports && <DataTable data={reports} origin="reports" />}
+        {reports && <DataTable data={reports} origin="reports" faOrigin="ریپورت" deleteHandler={deleteReportHandler} />}
       </Row>
     </Container>
   );

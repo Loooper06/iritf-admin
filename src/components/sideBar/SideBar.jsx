@@ -16,6 +16,7 @@ import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutl
 import OndemandVideoOutlinedIcon from "@mui/icons-material/OndemandVideoOutlined";
 import Diversity1OutlinedIcon from "@mui/icons-material/Diversity1Outlined";
 import SportsTennisOutlinedIcon from "@mui/icons-material/SportsTennisOutlined";
+import GroupsIcon from '@mui/icons-material/Groups';
 import AutoAwesomeMosaicOutlinedIcon from "@mui/icons-material/AutoAwesomeMosaicOutlined";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
@@ -123,6 +124,24 @@ const SideBar = () => {
     },
     {
       id: "8",
+      title: "باشگاه ها",
+      icon: <GroupsIcon />,
+      path: "/clubs",
+      children: [
+        {
+          id: "8.1",
+          title: "افزودن باشگاه",
+          path: "/clubs/create",
+        },
+        {
+          id: "8.2",
+          title: "لیست باشگاه ها",
+          path: "/clubs/list",
+        },
+      ],
+    },
+    {
+      id: "9",
       title: "گزارش تصویری",
       icon: <AutoAwesomeMosaicOutlinedIcon />,
       path: "/image-reports",

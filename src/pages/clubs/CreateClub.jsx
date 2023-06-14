@@ -1,19 +1,24 @@
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { useEffect, useRef, useState } from "react";
 import { Button, Chip } from "@mui/material";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import styles from "../../shared/assets/Tree.module.css";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Tree from "react-d3-tree";
 
-const CreateForm = () => {
+
+const CreateClub = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState({});
   const [title, setTitle] = useState("");
   const [images, setImages] = useState([]);
   const [files, setFiles] = useState([]);
   const [tags, setTags] = useState([]);
+  const [text, setText] = useState([]);
+  const [webSiteLink, setWebSiteLink] = useState("");
 
   const tagInput = useRef();
 
@@ -28,7 +33,7 @@ const CreateForm = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "فرم ها" && item.parent === null) return item;
+        if (item.name === "اخبار" && item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else
@@ -71,7 +76,7 @@ const CreateForm = () => {
     }
   };
 
-  const createFormsHandler = () => {
+  const createMatchesHandler = () => {
     Swal.fire({
       text: "اطلاعات ثبت شود ؟",
       icon: "warning",
@@ -85,6 +90,8 @@ const CreateForm = () => {
         const Data = new FormData();
         Data.append("title", title);
         Data.append("category", selectedCategory._id);
+        Data.append("text", text);
+        Data.append("siteLink", webSiteLink);
 
         for (const image of images) {
           Data.append("files", image);
@@ -97,7 +104,7 @@ const CreateForm = () => {
         Data.append("tags", tags);
 
         const createResult = await axios
-          .post(`${process.env.REACT_APP_API_URL}/admin/forms/create`, Data, {
+          .post(`${process.env.REACT_APP_API_URL}/admin/clubs/create`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
           })
@@ -122,7 +129,7 @@ const CreateForm = () => {
   return (
     <Container fluid className="mb-5">
       <Row>
-        <SectionTitle title="افزودن فرم" />
+        <SectionTitle title="افزودن باشگاه" />
       </Row>
       <Row className="mt-3">
         <Col xs={3}>
@@ -135,10 +142,10 @@ const CreateForm = () => {
           />
         </Col>
         <Col xs={3}>
-          <Form.Label htmlFor="fromsImage">تصویر فرم :</Form.Label>
+          <Form.Label htmlFor="matchesImage">تصویر باشگاه :</Form.Label>
           <Form.Control
             type="file"
-            id="fromsImage"
+            id="matchesImage"
             className="mt-1"
             multiple
             onChange={(e) => setImages(e.target.files)}
@@ -166,19 +173,39 @@ const CreateForm = () => {
             ))}
           </div>
         </Col>
-        <Col xs={12}>
+        <Row xs={12}>
           <Col xs={3} style={{"margin":"20px 0"}}>
-            <Form.Label htmlFor="fromsFiles">فایل فرم (pdf.) :</Form.Label>
+            <Form.Label htmlFor="matchesFiles">فایل باشگاه (pdf.) :</Form.Label>
             <Form.Control
               type="file"
               accept=".pdf"
-              id="fromsFiles"
+              id="matchesFiles"
               className="mt-1"
-              multiple
               onChange={(e) => setFiles(e.target.files)}
             />
           </Col>
-        </Col>
+          <Col xs={3} style={{"margin":"20px 0"}}>
+            <label>لینک سایت :</label>
+            <input
+            type="text"
+            className="solid_input"
+            value={webSiteLink}
+            onChange={(e) => setWebSiteLink(e.target.value)}
+          />
+          </Col>
+          <Col xs={6} style={{"margin":"20px 0"}}>
+            <label>متن باشگاه :</label>
+            <div className="mt-3">
+              <CKEditor
+                editor={ClassicEditor}
+                onChange={(event, editor) => {
+                  const data = editor.getData();
+                  setText(data);
+                }}
+              />
+            </div>
+          </Col>
+        </Row>
         <Col xs={6} className="mt-4">
           <label>دسته بندی :</label>
           {categories.length && (
@@ -208,9 +235,9 @@ const CreateForm = () => {
             variant="contained"
             color="success"
             size="large"
-            onClick={createFormsHandler}
+            onClick={createMatchesHandler}
           >
-            ایجاد فرم
+            ایجاد باشگاه
           </Button>
         </Col>
       </Row>
@@ -218,4 +245,4 @@ const CreateForm = () => {
   );
 };
 
-export default CreateForm;
+export default CreateClub;
