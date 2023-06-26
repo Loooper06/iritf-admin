@@ -1,4 +1,4 @@
-import { Col, Container, Form, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
@@ -10,11 +10,13 @@ import { Link } from 'react-router-dom';
 
 import { useParams } from 'react-router-dom';
 
-const EditVideos = () => {
+const EditClub = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState({});
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState([]);
+  const [text, setText] = useState([]);
+  const [webSiteLink, setWebSiteLink] = useState("");
 
   const { id } = useParams();
 
@@ -28,7 +30,7 @@ const EditVideos = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "ویدیو ها" &&  item.parent === null) return item;
+        if (item.name === "اخبار" && item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else
@@ -38,20 +40,29 @@ const EditVideos = () => {
       });
   }
 
-  async function getNews() {
+  async function getClub() {
+    const parseText = (text) => {
+      const parser = new DOMParser();
+      const textHTML = parser.parseFromString(text, 'text/html');
+      const p = textHTML.querySelector('p');
+      const actualText = p.textContent;
+      return actualText;
+    }
 
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/videos/list/${id}`, {
+      .get(`${process.env.REACT_APP_API_URL}/admin/clubs/list/${id}`, {
         withCredentials: true,
       })
       .then((res) => res.data)
       .catch((err) => err.response);
 
     if (getResult.statusCode === 200) {
-      const { title, category, tags } = getResult.data.video;
+      const { title, category, tags, text} = getResult.data.club;
+      const correctText = parseText(text)
       setTitle(title);
       setSelectedCategory(category);
       setTags(tags);
+      setText(correctText);
     } else
       Swal.fire({
         text: getResult.message,
@@ -63,7 +74,7 @@ const EditVideos = () => {
 
   useEffect(() => {
     getCategories();
-    getNews();
+    getClub();
   }, []);
 
   const addTagHandler = (event) => {
@@ -95,7 +106,7 @@ const EditVideos = () => {
     }
   };
 
-  const updateNewsHandler = () => {
+  const updateClubHandler = () => {
     Swal.fire({
       text: "تغییرات ثبت شود ؟",
       icon: "warning",
@@ -108,11 +119,13 @@ const EditVideos = () => {
       if (result.isConfirmed) {
         const Data = new FormData();
         Data.append("title", title);
-        Data.append("category", selectedCategory._id);
         Data.append("tags", tags);
+        Data.append("category", selectedCategory._id);
+        Data.append("text", text);
+        Data.append("siteLink", webSiteLink);
 
         const createResult = await axios
-          .patch(`${process.env.REACT_APP_API_URL}/admin/videos/update/${id}`, Data, {
+          .patch(`${process.env.REACT_APP_API_URL}/admin/clubs/update/${id}`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
           })
@@ -137,7 +150,7 @@ const EditVideos = () => {
   return (
     <Container fluid className="mb-5">
       <Row>
-        <SectionTitle title="ویرایش ویدیو" />
+        <SectionTitle title="ویرایش باشگاه" />
       </Row>
       <Row className="mt-3">
         <Col xs={3}>
@@ -171,6 +184,27 @@ const EditVideos = () => {
             ))}
           </div>
         </Col>
+        <Col xs={3} style={{"margin":"20px 0"}}>
+            <label>لینک سایت :</label>
+            <input
+            type="text"
+            className="solid_input"
+            value={webSiteLink}
+            onChange={(e) => setWebSiteLink(e.target.value)}
+          />
+        </Col>  
+        <Col xs={6} style={{"margin":"20px 0"}}>
+          <label>متن باشگاه :</label>
+          <div className="mt-3">
+            <CKEditor
+              editor={ClassicEditor}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                setText(data);
+              }}
+            />
+          </div>
+        </Col>
         <Col xs={6} className="mt-4">
           <label>دسته بندی :</label>
           {categories.length && (
@@ -200,11 +234,11 @@ const EditVideos = () => {
             variant="contained"
             color="success"
             size="large"
-            onClick={updateNewsHandler}
+            onClick={updateClubHandler}
           >
-            ویرایش خبر
+            ویرایش باشگاه
           </Button>
-          <Link to={'/videos/list'}>
+          <Link to={'/clubs/list'}>
             <Button
               variant="contained"
               className="mx-3"
@@ -220,4 +254,4 @@ const EditVideos = () => {
   );
 };
 
-export default EditVideos;
+export default EditClub;

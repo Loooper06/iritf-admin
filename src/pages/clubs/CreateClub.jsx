@@ -76,7 +76,7 @@ const CreateClub = () => {
     }
   };
 
-  const createMatchesHandler = () => {
+  const createClubHandler = () => {
     Swal.fire({
       text: "اطلاعات ثبت شود ؟",
       icon: "warning",
@@ -235,7 +235,7 @@ const CreateClub = () => {
             variant="contained"
             color="success"
             size="large"
-            onClick={createMatchesHandler}
+            onClick={createClubHandler}
           >
             ایجاد باشگاه
           </Button>

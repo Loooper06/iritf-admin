@@ -4,44 +4,29 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Button, Chip } from "@mui/material";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { Link } from 'react-router-dom';
 
 import { useParams } from 'react-router-dom';
 
-const EditNews = () => {
+const EditVideo = () => {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState([]);
-  const [text, setText] = useState([]);
-  const [short_text, setShort_text] = useState([]);
 
   const { id } = useParams();
 
-  async function getNews() {
-    const parseText = (text) => {
-      const parser = new DOMParser();
-      const textHTML = parser.parseFromString(text, 'text/html');
-      const p = textHTML.querySelector('p');
-      const actualText = p.textContent;
-      return actualText;
-    }
+  async function getVideo() {
 
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/news/list/${id}`, {
+      .get(`${process.env.REACT_APP_API_URL}/admin/videos/list/${id}`, {
         withCredentials: true,
       })
       .then((res) => res.data)
       .catch((err) => err.response);
 
     if (getResult.statusCode === 200) {
-      const { title, tags, text, short_text } = getResult.data.news;
-      const correctShortText = parseText(short_text);
-      const correctText = parseText(text);
+      const { title, tags } = getResult.data.video;
       setTitle(title);
       setTags(tags);
-      setText(correctText);
-      setShort_text(correctShortText);
     } else
       Swal.fire({
         text: getResult.message,
@@ -52,7 +37,7 @@ const EditNews = () => {
   const tagInput = useRef();
 
   useEffect(() => {
-    getNews();
+    getVideo();
   }, []);
 
   const addTagHandler = (event) => {
@@ -84,7 +69,7 @@ const EditNews = () => {
     }
   };
 
-  const updateNewsHandler = () => {
+  const updateVideoHandler = () => {
     Swal.fire({
       text: "تغییرات ثبت شود ؟",
       icon: "warning",
@@ -98,11 +83,9 @@ const EditNews = () => {
         const Data = new FormData();
         Data.append("title", title);
         Data.append("tags", tags);
-        Data.append("text", text);
-        Data.append("short_text", short_text);
 
         const createResult = await axios
-          .patch(`${process.env.REACT_APP_API_URL}/admin/news/update/${id}`, Data, {
+          .patch(`${process.env.REACT_APP_API_URL}/admin/videos/update/${id}`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
           })
@@ -127,7 +110,7 @@ const EditNews = () => {
   return (
     <Container fluid className="mb-5">
       <Row>
-        <SectionTitle title="ویرایش خبر" />
+        <SectionTitle title="ویرایش ویدیو" />
       </Row>
       <Row className="mt-3">
         <Col xs={3}>
@@ -161,42 +144,16 @@ const EditNews = () => {
             ))}
           </div>
         </Col>
-        <Col xs={6} className="mt-4">
-          <label>متن خبر :</label>
-          <div className="mt-3">
-            <CKEditor
-              editor={ClassicEditor}
-              onChange={(event, editor) => {
-                const data = editor.getData();
-                setText(data);
-              }}
-              data = {text}
-            />
-          </div>
-        </Col>
-        <Col xs={6} className="mt-4">
-          <label>متن کوتاه خبر :</label>
-          <div className="mt-3">
-            <CKEditor
-              editor={ClassicEditor}
-              onChange={(event, editor) => {
-                const data = editor.getData();
-                setShort_text(data);
-              }}
-              data={short_text}
-            />
-          </div>
-        </Col>
         <Col xs={12} className="text-start mt-4">
           <Button
             variant="contained"
             color="success"
             size="large"
-            onClick={updateNewsHandler}
+            onClick={updateVideoHandler}
           >
-            ویرایش خبر
+            ویرایش ویدیو
           </Button>
-          <Link to={'/news/list'}>
+          <Link to={'/videos/list'}>
             <Button
               variant="contained"
               className="mx-3"
@@ -212,4 +169,4 @@ const EditNews = () => {
   );
 };
 
-export default EditNews;
+export default EditVideo;

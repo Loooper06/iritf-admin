@@ -3,45 +3,55 @@ import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Tree from "react-d3-tree";
+import styles from "../../shared/assets/Tree.module.css";
 import { Button, Chip } from "@mui/material";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { Link } from 'react-router-dom';
 
 import { useParams } from 'react-router-dom';
 
-const EditNews = () => {
+const EditCommittee = () => {
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState({});
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState([]);
-  const [text, setText] = useState([]);
-  const [short_text, setShort_text] = useState([]);
 
   const { id } = useParams();
 
-  async function getNews() {
-    const parseText = (text) => {
-      const parser = new DOMParser();
-      const textHTML = parser.parseFromString(text, 'text/html');
-      const p = textHTML.querySelector('p');
-      const actualText = p.textContent;
-      return actualText;
-    }
-
+  async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/news/list/${id}`, {
+      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
         withCredentials: true,
       })
       .then((res) => res.data)
       .catch((err) => err.response);
 
     if (getResult.statusCode === 200) {
-      const { title, tags, text, short_text } = getResult.data.news;
-      const correctShortText = parseText(short_text);
-      const correctText = parseText(text);
+      const findedCategory = getResult.data.parents.filter((item) => {
+        if (item.name === "اخبار" && item.parent === null) return item;
+      });
+      setCategories(findedCategory);
+    } else
+      Swal.fire({
+        text: getResult.message,
+        icon: "error",
+      });
+  }
+
+  async function getCommittee() {
+
+    const getResult = await axios
+      .get(`${process.env.REACT_APP_API_URL}/admin/committees/list/${id}`, {
+        withCredentials: true,
+      })
+      .then((res) => res.data)
+      .catch((err) => err.response);
+
+    if (getResult.statusCode === 200) {
+      const { title, category, tags} = getResult.data.committee;
       setTitle(title);
+      setSelectedCategory(category);
       setTags(tags);
-      setText(correctText);
-      setShort_text(correctShortText);
     } else
       Swal.fire({
         text: getResult.message,
@@ -52,7 +62,8 @@ const EditNews = () => {
   const tagInput = useRef();
 
   useEffect(() => {
-    getNews();
+    getCategories();
+    getCommittee();
   }, []);
 
   const addTagHandler = (event) => {
@@ -84,7 +95,7 @@ const EditNews = () => {
     }
   };
 
-  const updateNewsHandler = () => {
+  const updateCommitteeHandler = () => {
     Swal.fire({
       text: "تغییرات ثبت شود ؟",
       icon: "warning",
@@ -98,11 +109,10 @@ const EditNews = () => {
         const Data = new FormData();
         Data.append("title", title);
         Data.append("tags", tags);
-        Data.append("text", text);
-        Data.append("short_text", short_text);
+        Data.append("category", selectedCategory._id);
 
         const createResult = await axios
-          .patch(`${process.env.REACT_APP_API_URL}/admin/news/update/${id}`, Data, {
+          .patch(`${process.env.REACT_APP_API_URL}/admin/committees/update/${id}`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
           })
@@ -127,7 +137,7 @@ const EditNews = () => {
   return (
     <Container fluid className="mb-5">
       <Row>
-        <SectionTitle title="ویرایش خبر" />
+        <SectionTitle title="ویرایش کمیته" />
       </Row>
       <Row className="mt-3">
         <Col xs={3}>
@@ -162,41 +172,39 @@ const EditNews = () => {
           </div>
         </Col>
         <Col xs={6} className="mt-4">
-          <label>متن خبر :</label>
-          <div className="mt-3">
-            <CKEditor
-              editor={ClassicEditor}
-              onChange={(event, editor) => {
-                const data = editor.getData();
-                setText(data);
-              }}
-              data = {text}
-            />
-          </div>
+          <label>دسته بندی :</label>
+          {categories.length && (
+            <div
+              id="treeWrapper"
+              style={{ width: "100%", height: "30rem" }}
+              className="border rounded mt-3"
+            >
+              <Tree
+                data={categories}
+                rootNodeClassName={styles.node__root}
+                branchNodeClassName={styles.node__branch}
+                leafNodeClassName={styles.node__leaf}
+                orientation="vertical"
+                onNodeClick={(node) => setSelectedCategory(node.data)}
+                collapsible={false}
+              />
+            </div>
+          )}
         </Col>
-        <Col xs={6} className="mt-4">
-          <label>متن کوتاه خبر :</label>
-          <div className="mt-3">
-            <CKEditor
-              editor={ClassicEditor}
-              onChange={(event, editor) => {
-                const data = editor.getData();
-                setShort_text(data);
-              }}
-              data={short_text}
-            />
-          </div>
+        <Col xs={2} className="mt-4">
+          <label>دسته بندی انتخاب شده :</label>
+          <div className="solid_input">{selectedCategory.name}</div>
         </Col>
         <Col xs={12} className="text-start mt-4">
           <Button
             variant="contained"
             color="success"
             size="large"
-            onClick={updateNewsHandler}
+            onClick={updateCommitteeHandler}
           >
-            ویرایش خبر
+            ویرایش کمیته
           </Button>
-          <Link to={'/news/list'}>
+          <Link to={'/committees/list'}>
             <Button
               variant="contained"
               className="mx-3"
@@ -212,4 +220,4 @@ const EditNews = () => {
   );
 };
 
-export default EditNews;
+export default EditCommittee;

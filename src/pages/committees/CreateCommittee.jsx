@@ -29,7 +29,7 @@ const CreateCommittee = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "کمیته ها" && item.parent === null) return item;
+        if (item.name === "اخبار" && item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else

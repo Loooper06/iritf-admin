@@ -4,10 +4,10 @@ import { Button, Chip } from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
-import styles from "../../shared/assets/Tree.module.css";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Tree from "react-d3-tree";
+import styles from "../../shared/assets/Tree.module.css";
 
 
 const CreateMatch = () => {
@@ -17,8 +17,7 @@ const CreateMatch = () => {
   const [images, setImages] = useState([]);
   const [files, setFiles] = useState([]);
   const [tags, setTags] = useState([]);
-  const [text, setText] = useState([]);
-  const [webSiteLink, setWebSiteLink] = useState("");
+  const [description, setDescription] = useState([]);
 
   const tagInput = useRef();
 
@@ -76,7 +75,7 @@ const CreateMatch = () => {
     }
   };
 
-  const createMatchesHandler = () => {
+  const createMatcheHandler = () => {
     Swal.fire({
       text: "اطلاعات ثبت شود ؟",
       icon: "warning",
@@ -90,8 +89,7 @@ const CreateMatch = () => {
         const Data = new FormData();
         Data.append("title", title);
         Data.append("category", selectedCategory._id);
-        Data.append("text", text);
-        Data.append("siteLink", webSiteLink);
+        Data.append("description", description);
 
         for (const image of images) {
           Data.append("files", image);
@@ -147,7 +145,6 @@ const CreateMatch = () => {
             type="file"
             id="matchesImage"
             className="mt-1"
-            multiple
             onChange={(e) => setImages(e.target.files)}
           />
         </Col>
@@ -184,23 +181,14 @@ const CreateMatch = () => {
               onChange={(e) => setFiles(e.target.files)}
             />
           </Col>
-          <Col xs={3} style={{"margin":"20px 0"}}>
-            <label>لینک سایت :</label>
-            <input
-            type="text"
-            className="solid_input"
-            value={webSiteLink}
-            onChange={(e) => setWebSiteLink(e.target.value)}
-          />
-          </Col>
           <Col xs={6} style={{"margin":"20px 0"}}>
-            <label>متن مسابقه :</label>
+            <label>توضیحات مسابقه :</label>
             <div className="mt-3">
               <CKEditor
                 editor={ClassicEditor}
                 onChange={(event, editor) => {
                   const data = editor.getData();
-                  setText(data);
+                  setDescription(data);
                 }}
               />
             </div>
@@ -235,7 +223,7 @@ const CreateMatch = () => {
             variant="contained"
             color="success"
             size="large"
-            onClick={createMatchesHandler}
+            onClick={createMatcheHandler}
           >
             ایجاد مسابقه
           </Button>
