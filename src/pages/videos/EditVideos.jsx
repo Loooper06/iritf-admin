@@ -1,22 +1,22 @@
 import { Col, Container, Form, Row } from "react-bootstrap";
-import { useEffect, useRef, useState } from "react";
-import { Button, Chip } from "@mui/material";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
-import styles from "../../shared/assets/Tree.module.css";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Tree from "react-d3-tree";
+import styles from "../../shared/assets/Tree.module.css";
+import { Button, Chip } from "@mui/material";
+import { Link } from 'react-router-dom';
 
+import { useParams } from 'react-router-dom';
 
-const CreateVideo = () => {
+const EditVideos = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState({});
   const [title, setTitle] = useState("");
-  const [files, setFiles] = useState([]);
   const [tags, setTags] = useState([]);
 
-  const tagInput = useRef();
-
+  const { id } = useParams();
 
   async function getCategories() {
     const getResult = await axios
@@ -28,7 +28,7 @@ const CreateVideo = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "ویدیو ها" && item.parent === null) return item;
+        if (item.name === "ویدیو ها" &&  item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else
@@ -38,8 +38,32 @@ const CreateVideo = () => {
       });
   }
 
+  async function getNews() {
+
+    const getResult = await axios
+      .get(`${process.env.REACT_APP_API_URL}/admin/videos/list/${id}`, {
+        withCredentials: true,
+      })
+      .then((res) => res.data)
+      .catch((err) => err.response);
+
+    if (getResult.statusCode === 200) {
+      const { title, category, tags } = getResult.data.video;
+      setTitle(title);
+      setSelectedCategory(category);
+      setTags(tags);
+    } else
+      Swal.fire({
+        text: getResult.message,
+        icon: "error",
+      });
+  }
+
+  const tagInput = useRef();
+
   useEffect(() => {
     getCategories();
+    getNews();
   }, []);
 
   const addTagHandler = (event) => {
@@ -71,9 +95,9 @@ const CreateVideo = () => {
     }
   };
 
-  const createVideosHandler = () => {
+  const updateNewsHandler = () => {
     Swal.fire({
-      text: "اطلاعات ثبت شود ؟",
+      text: "تغییرات ثبت شود ؟",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -84,22 +108,18 @@ const CreateVideo = () => {
       if (result.isConfirmed) {
         const Data = new FormData();
         Data.append("title", title);
-        Data.append("tags", tags);
-        
-        for (const file of files) {
-          Data.append("videos", file);
-        }
-        
         Data.append("category", selectedCategory._id);
+        Data.append("tags", tags);
+
         const createResult = await axios
-        .post(`${process.env.REACT_APP_API_URL}/admin/videos/create`, Data, {
+          .patch(`${process.env.REACT_APP_API_URL}/admin/videos/update/${id}`, Data, {
             withCredentials: true,
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: { "Content-Type": "application/json" },
           })
           .then((res) => res.data)
           .catch((err) => err.response.data);
 
-        if (createResult.statusCode === 201) {
+        if (createResult.statusCode === 200) {
           Swal.fire({
             text: createResult.data.message,
             icon: "success",
@@ -117,7 +137,7 @@ const CreateVideo = () => {
   return (
     <Container fluid className="mb-5">
       <Row>
-        <SectionTitle title="افزودن ویدیو" />
+        <SectionTitle title="ویرایش ویدیو" />
       </Row>
       <Row className="mt-3">
         <Col xs={3}>
@@ -127,17 +147,6 @@ const CreateVideo = () => {
             className="solid_input"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-          />
-        </Col>
-        <Col xs={3}>
-          <Form.Label htmlFor="videosImage">فایل ویدیو (mp4, .mov, .mkv.) :</Form.Label>
-          <Form.Control
-            type="file"
-            accept=".mp4, .mov, .mkv"
-            id="videosImage"
-            className="mt-1"
-            multiple
-            onChange={(e) => setFiles(e.target.files)}
           />
         </Col>
         <Col xs={3}>
@@ -191,14 +200,24 @@ const CreateVideo = () => {
             variant="contained"
             color="success"
             size="large"
-            onClick={createVideosHandler}
+            onClick={updateNewsHandler}
           >
-            ایجاد ویدیو
+            ویرایش خبر
           </Button>
+          <Link to={'/videos/list'}>
+            <Button
+              variant="contained"
+              className="mx-3"
+              color="error"
+              size="large"
+            >
+              بازگشت
+            </Button>
+          </Link>
         </Col>
       </Row>
     </Container>
   );
 };
 
-export default CreateVideo;
+export default EditVideos;

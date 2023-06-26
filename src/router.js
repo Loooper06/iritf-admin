@@ -18,6 +18,7 @@ import NewsList from "./pages/news/NewsList.jsx";
 import CreateRank from "./pages/ranks/CreateRank.jsx";
 import RanksList from "./pages/ranks/RanksList.jsx";
 import CreateVideo from "./pages/videos/CreateVideo.jsx";
+import EditVideos from "./pages/videos/EditVideos.jsx";
 import VideosList from "./pages/videos/VideosList.jsx";
 
 const router = [
@@ -41,6 +42,11 @@ const router = [
   { path: "/forms/list", element: <FormsList /> },
   { path: "/videos/create", element: <CreateVideo /> },
   { path: "/videos/list", element: <VideosList /> },
+  {
+    path: "/videos/list",
+    element: <EditVideos />,
+    children: [{ path: ":id" }],
+  },
   { path: "/committees/create", element: <CreateCommittee /> },
   { path: "/committees/list", element: <CommitteesList /> },
   { path: "/matches/create", element: <CreateMatch /> },

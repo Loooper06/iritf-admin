@@ -10,24 +10,33 @@ import moment from "jalali-moment";
 import ReactPaginate from "react-paginate";
 import { Avatar, Button } from "@mui/material";
 import { Modal, Carousel } from 'antd';
+import Slider from "react-slick";
 import DefaultImage from "../../shared/assets/images/default-image.jpeg"
 import { Link } from 'react-router-dom';
 
 import styles from "./DataTable.module.css"
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import "./Slick.css"
 
 export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
   const [selectedItem, setSelectedItem] = React.useState({});
   const [modalVisible, setModalVisible] = React.useState(false);
-  const contentStyle = {
-    margin: 0,
-    height: '160px',
-    color: '#fff',
-    lineHeight: '160px',
-    textAlign: 'center',
-    background: '#364d79',
+
+  const sliderRef = React.useRef(null);
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    speed: 500,
+    arrows:false,
   };
-  function createData(_id, image, title, category, createdAt) {
-    return { _id, image, title, category, createdAt };
+
+  function createData(_id, image, videos, title, category, createdAt) {
+    return { _id, image, videos, title, category, createdAt };
   }
 
   const rows = [];
@@ -38,6 +47,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
           createData(
             item._id,
             item.imagesURL ? item.imagesURL[0] : item.imageURL ? item.imageURL : undefined,
+            item.videos ? item.videos[0] : undefined,
             item.title,
             item.category,
             item.createdAt
@@ -62,12 +72,16 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
               key={row._id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              <TableCell component="th" scope="row" align="right">
-                <Avatar
-                  alt="Remy Sharp"
-                  src={row.image}
-                  sx={{ width: 56, height: 56 }}
-                />
+              <TableCell align="right">
+                {origin === 'videos' ? (
+                  <video className={styles.video} src={`${process.env.REACT_APP_API_URL}/${row.videos}`} controls />
+                ) : (
+                  <Avatar
+                    alt="Remy Sharp"
+                    src={row.image}
+                    sx={{ width: 56, height: 56 }}
+                  />
+                )}
               </TableCell>
               <TableCell align="right">{row.title}</TableCell>
               <TableCell align="right">{row.category.name}</TableCell>
@@ -104,17 +118,17 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
               width={1000}
               style={{ top: 40 }}
             >
+              <hr />
               <div className={styles.itemData}>
-                <div className={styles.carouselContainer}>
-                  <div className={styles.carousel}>
-                    <Carousel>
-                      {selectedItem.imagesURL ? selectedItem.imagesURL.map((imageUrl) => (
-                        <div className={styles.contentStyle} style={contentStyle} key={imageUrl}>
-                          <img className={styles.carouselImage} src={imageUrl} alt="carousel-item" />
+                {origin === 'videos' ? (
+                  <div className={styles.videosSlider}>
+                    <Slider ref={sliderRef} {...settings}>
+                      {selectedItem.videos ? selectedItem.videos.map((videoUrl) => (
+                        <div className={styles.videoContainer} key={videoUrl}>
+                          <video className={styles.modalVideo} src={`${process.env.REACT_APP_API_URL}/${videoUrl}`} controls />
                         </div>
-                      )): 
-                        <div className={styles.contentStyle} style=
-                        {contentStyle}>
+                      )):
+                        <div className={styles.contentStyle}>
                           <img
                             alt="default-image"
                             style={{"width":"100%", "height":"400px", "object-fit":"cover"}}
@@ -122,9 +136,29 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                           />
                         </div>
                       }
-                    </Carousel>
+                    </Slider>
                   </div>
-                </div>
+                ) : (
+                  <div className={styles.carouselContainer}>
+                    <div className={styles.carousel}>
+                      <Carousel>
+                        {selectedItem.imagesURL ? selectedItem.imagesURL.map((imageUrl) => (
+                          <div className={styles.contentStyle} key={imageUrl}>
+                            <img className={styles.carouselImage} src={imageUrl} alt="carousel-item" />
+                          </div>
+                        )): 
+                          <div className={styles.contentStyle}>
+                            <img
+                              alt="default-image"
+                              style={{"width":"100%", "height":"400px", "object-fit":"cover"}}
+                              src={DefaultImage}
+                            />
+                          </div>
+                        }
+                      </Carousel>
+                    </div>
+                  </div>
+                )}
                 <h3 style={{"marginBottom":"24px"}}>{selectedItem.title}</h3>
                 <div className="d-flex align-items-center">
                   <h6 className="px-2 pt-1">تاریخ ایجاد :</h6>
@@ -213,7 +247,11 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
         <Table sx={{ minWidth: 500 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align="right">تصویر</TableCell>
+              {origin === 'videos' ? (
+                <TableCell align="right">ویدیو</TableCell>
+              ) : (
+                <TableCell align="right">تصویر</TableCell>
+              )}
               <TableCell align="right">عنوان</TableCell>
               <TableCell align="right">دسته بندی</TableCell>
               <TableCell align="right">تاریخ ایجاد</TableCell>
