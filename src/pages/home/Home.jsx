@@ -91,7 +91,6 @@ const Home = () => {
   const navigate = useNavigate();
 
   async function checkSignin() {
-    console.log("yes")
     const signIn = await checkAuth();
     if (signIn?.statusCode !== 200) navigate("/login");
     else getData();
