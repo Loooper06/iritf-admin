@@ -13,7 +13,7 @@ const NewsList = () => {
 
   async function getNewsList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/news/list`, {
+      .get('/admin/news/list', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -39,7 +39,7 @@ const NewsList = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const createResult = await axios
-          .delete(`${process.env.REACT_APP_API_URL}/admin/news/remove/${newsId}`, {
+          .delete(`/admin/news/remove/${newsId}`, {
             withCredentials: true,
           })
           .then((res) => res.data)
@@ -71,7 +71,7 @@ const NewsList = () => {
 
   const searchHandler = async () => {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/news/list/search`, {
+      .get('/admin/news/list/search', {
         withCredentials: true,
         params: { search },
       })

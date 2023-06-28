@@ -14,7 +14,7 @@ const FormsList = () => {
 
   async function getFormsList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/forms/list`, {
+      .get('/admin/forms/list', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -40,7 +40,7 @@ const FormsList = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const createResult = await axios
-          .delete(`${process.env.REACT_APP_API_URL}/admin/forms/remove/${formId}`, {
+          .delete(`/admin/forms/remove/${formId}`, {
             withCredentials: true,
           })
           .then((res) => res.data)
@@ -72,7 +72,7 @@ const FormsList = () => {
 
   const searchHandler = async () => {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/forms/list/search`, {
+      .get('/admin/forms/list/search', {
         withCredentials: true,
         params: { search },
       })

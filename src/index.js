@@ -6,6 +6,9 @@ import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.rtl.min.css";
 import { ThemeProvider } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
+import axios from "axios";
+
+axios.defaults.baseURL = `${process.env.REACT_APP_API_URL}`
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

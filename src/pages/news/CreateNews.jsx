@@ -20,7 +20,7 @@ const CreateNews = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
+      .get('/admin/category/parents', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -95,7 +95,7 @@ const CreateNews = () => {
         Data.append("short_text", short_text);
 
         const createResult = await axios
-          .post(`${process.env.REACT_APP_API_URL}/admin/news/create`, Data, {
+          .post('/admin/news/create', Data, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
           })

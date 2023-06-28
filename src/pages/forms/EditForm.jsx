@@ -20,7 +20,7 @@ const EditForm = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
+      .get('/admin/category/parents', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -41,7 +41,7 @@ const EditForm = () => {
   async function getForm() {
 
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/forms/list/${id}`, {
+      .get(`/admin/forms/list/${id}`, {
         withCredentials: true,
       })
       .then((res) => res.data)

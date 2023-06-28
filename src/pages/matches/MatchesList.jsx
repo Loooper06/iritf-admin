@@ -14,7 +14,7 @@ const MatchesList = () => {
 
   async function getMatchesList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/matches/list`, {
+      .get('/admin/matches/list', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -40,7 +40,7 @@ const MatchesList = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const createResult = await axios
-          .delete(`${process.env.REACT_APP_API_URL}/admin/matches/remove/${matchId}`, {
+          .delete(`/admin/matches/remove/${matchId}`, {
             withCredentials: true,
           })
           .then((res) => res.data)
@@ -72,7 +72,7 @@ const MatchesList = () => {
 
   const searchHandler = async () => {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/matches/list/search`, {
+      .get('/admin/matches/list/search', {
         withCredentials: true,
         params: { search },
       })

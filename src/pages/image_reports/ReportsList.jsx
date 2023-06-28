@@ -14,7 +14,7 @@ const ReportsList = () => {
 
   async function getReportsList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/reports/list`, {
+      .get('/admin/reports/list', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -40,7 +40,7 @@ const ReportsList = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const createResult = await axios
-          .delete(`${process.env.REACT_APP_API_URL}/admin/reports/remove/${reportId}`, {
+          .delete(`/admin/reports/remove/${reportId}`, {
             withCredentials: true,
           })
           .then((res) => res.data)
@@ -72,7 +72,7 @@ const ReportsList = () => {
 
   const searchHandler = async () => {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/reports/list/search`, {
+      .get('/admin/reports/list/search', {
         withCredentials: true,
         params: { search },
       })

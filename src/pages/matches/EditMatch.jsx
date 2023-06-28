@@ -23,7 +23,7 @@ const EditMatch = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
+      .get('/admin/category/parents', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -51,7 +51,7 @@ const EditMatch = () => {
     }
 
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/matches/list/${id}`, {
+      .get(`/admin/matches/list/${id}`, {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -125,7 +125,7 @@ const EditMatch = () => {
         Data.append("description", description);
 
         const createResult = await axios
-          .patch(`${process.env.REACT_APP_API_URL}/admin/matches/update/${id}`, Data, {
+          .patch(`/admin/matches/update/${id}`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
           })

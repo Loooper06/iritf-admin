@@ -21,7 +21,7 @@ const CreateRank = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
+      .get('/admin/category/parents', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -98,7 +98,7 @@ const CreateRank = () => {
         Data.append("tags", tags);
 
         const createResult = await axios
-          .post(`${process.env.REACT_APP_API_URL}/admin/ranks/create`, Data, {
+          .post('/admin/ranks/create', Data, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
           })

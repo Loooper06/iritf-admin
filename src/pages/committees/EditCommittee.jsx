@@ -20,7 +20,7 @@ const EditCommittee = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
+      .get('/admin/category/parents', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -41,7 +41,7 @@ const EditCommittee = () => {
   async function getCommittee() {
 
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/committees/list/${id}`, {
+      .get(`/admin/committees/list/${id}`, {
         withCredentials: true,
       })
       .then((res) => res.data)

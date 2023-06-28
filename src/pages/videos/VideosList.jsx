@@ -13,7 +13,7 @@ const VideosList = () => {
 
   async function getVideosList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/videos/list`, {
+      .get('/admin/videos/list', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -40,7 +40,7 @@ const VideosList = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const createResult = await axios
-          .delete(`${process.env.REACT_APP_API_URL}/admin/videos/remove/${videoId}`, {
+          .delete(`/admin/videos/remove/${videoId}`, {
             withCredentials: true,
           })
           .then((res) => res.data)
@@ -72,7 +72,7 @@ const VideosList = () => {
 
   const searchHandler = async () => {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/videos/list/search`, {
+      .get('/admin/videos/list/search', {
         withCredentials: true,
         params: { search },
       })

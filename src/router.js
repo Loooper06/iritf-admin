@@ -3,6 +3,7 @@ import CalendarsList from "./pages/calendars/CalendarsList.jsx";
 import CreateCalendar from "./pages/calendars/CreateCalendar.jsx";
 import ClubsList from "./pages/clubs/ClubsList.jsx";
 import CreateClub from "./pages/clubs/CreateClub.jsx";
+import EditClub from "./pages/clubs/EditClub.jsx";
 import CommitteesList from "./pages/committees/CommitteesList.jsx";
 import CreateCommittee from "./pages/committees/CreateCommittee.jsx";
 import CreateForm from "./pages/forms/CreateForm.jsx";
@@ -84,6 +85,11 @@ const router = [
   },
   { path: "/clubs/create", element: <CreateClub /> },
   { path: "/clubs/list", element: <ClubsList /> },
+  {
+    path: "/clubs/list",
+    element: <EditClub/>,
+    children: [{ path: ":id" }],
+  },
   { path: "/image-reports/create", element: <CreateReport /> },
   { path: "/image-reports/list", element: <ReportsList /> },
   {

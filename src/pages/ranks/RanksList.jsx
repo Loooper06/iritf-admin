@@ -14,7 +14,7 @@ const RanksList = () => {
 
   async function getRanksList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/ranks/list`, {
+      .get('/admin/ranks/list', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -40,7 +40,7 @@ const RanksList = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const createResult = await axios
-          .delete(`${process.env.REACT_APP_API_URL}/admin/ranks/remove/${rankId}`, {
+          .delete(`/admin/ranks/remove/${rankId}`, {
             withCredentials: true,
           })
           .then((res) => res.data)
@@ -72,7 +72,7 @@ const RanksList = () => {
 
   const searchHandler = async () => {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/ranks/list/search`, {
+      .get('/admin/ranks/list/search', {
         withCredentials: true,
         params: { search },
       })

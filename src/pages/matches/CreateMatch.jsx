@@ -24,7 +24,7 @@ const CreateMatch = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
+      .get('/admin/category/parents', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -102,7 +102,7 @@ const CreateMatch = () => {
         Data.append("tags", tags);
 
         const createResult = await axios
-          .post(`${process.env.REACT_APP_API_URL}/admin/matches/create`, Data, {
+          .post('/admin/matches/create', Data, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
           })

@@ -17,7 +17,7 @@ const EditRank = () => {
   async function getNews() {
 
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/ranks/list/${id}`, {
+      .get(`/admin/ranks/list/${id}`, {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -85,7 +85,7 @@ const EditRank = () => {
         Data.append("tags", tags);
 
         const createResult = await axios
-          .patch(`${process.env.REACT_APP_API_URL}/admin/ranks/update/${id}`, Data, {
+          .patch(`/admin/ranks/update/${id}`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
           })

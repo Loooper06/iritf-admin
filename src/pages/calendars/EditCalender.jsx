@@ -20,7 +20,7 @@ const EditCalendar = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
+      .get('/admin/category/parents', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -41,7 +41,7 @@ const EditCalendar = () => {
   async function getCalendar() {
 
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/calendars/list/${id}`, {
+      .get(`/admin/calendars/list/${id}`, {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -113,7 +113,7 @@ const EditCalendar = () => {
         Data.append("category", selectedCategory._id);
 
         const createResult = await axios
-          .patch(`${process.env.REACT_APP_API_URL}/admin/calendars/update/${id}`, Data, {
+          .patch(`/admin/calendars/update/${id}`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
           })

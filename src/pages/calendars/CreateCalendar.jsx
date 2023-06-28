@@ -21,7 +21,7 @@ const CreateCalendar = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
+      .get('/admin/category/parents', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -98,7 +98,7 @@ const CreateCalendar = () => {
         Data.append("tags", tags);
 
         const createResult = await axios
-          .post(`${process.env.REACT_APP_API_URL}/admin/calendars/create`, Data, {
+          .post('/admin/calendars/create', Data, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
           })

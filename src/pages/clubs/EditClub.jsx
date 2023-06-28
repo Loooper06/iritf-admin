@@ -1,6 +1,8 @@
 import { Col, Container, Row } from "react-bootstrap";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import { useEffect, useRef, useState } from "react";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Tree from "react-d3-tree";
@@ -22,7 +24,7 @@ const EditClub = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
+      .get('/admin/category/parents', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -50,7 +52,7 @@ const EditClub = () => {
     }
 
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/clubs/list/${id}`, {
+      .get(`/admin/clubs/list/${id}`, {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -125,7 +127,7 @@ const EditClub = () => {
         Data.append("siteLink", webSiteLink);
 
         const createResult = await axios
-          .patch(`${process.env.REACT_APP_API_URL}/admin/clubs/update/${id}`, Data, {
+          .patch(`/admin/clubs/update/${id}`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
           })

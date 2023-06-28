@@ -14,7 +14,7 @@ const CalendarsList = () => {
 
   async function getCalendarsList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/calendars/list`, {
+      .get('/admin/calendars/list', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -40,7 +40,7 @@ const CalendarsList = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const createResult = await axios
-          .delete(`${process.env.REACT_APP_API_URL}/admin/calendars/remove/${calendarId}`, {
+          .delete(`/admin/calendars/remove/${calendarId}`, {
             withCredentials: true,
           })
           .then((res) => res.data)
@@ -72,7 +72,7 @@ const CalendarsList = () => {
 
   const searchHandler = async () => {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/calendars/list/search`, {
+      .get('/admin/calendars/list/search', {
         withCredentials: true,
         params: { search },
       })

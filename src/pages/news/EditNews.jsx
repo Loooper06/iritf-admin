@@ -28,7 +28,7 @@ const EditNews = () => {
     }
 
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/news/list/${id}`, {
+      .get(`/admin/news/list/${id}`, {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -102,7 +102,7 @@ const EditNews = () => {
         Data.append("short_text", short_text);
 
         const createResult = await axios
-          .patch(`${process.env.REACT_APP_API_URL}/admin/news/update/${id}`, Data, {
+          .patch(`/admin/news/update/${id}`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
           })

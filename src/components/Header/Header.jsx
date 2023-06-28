@@ -1,6 +1,7 @@
 import { Container, Row, Col } from "react-bootstrap";
 import moment from "jalali-moment";
 import { Button } from "@mui/material";
+import { Link } from 'react-router-dom';
 
 const Hedaer = () => {
   const now = new Date();
@@ -12,9 +13,16 @@ const Hedaer = () => {
           <h5>{moment(now).locale("fa").format("jYYYY/jMM/jDD")}</h5>
         </Col>
         <Col md={6} className="text-end">
-          <Button variant="contained" color="warning">
-            خروج
-          </Button>
+          <Link to={"/"}>
+            <Button variant="contained" className="mx-2">
+              خانه
+            </Button>
+          </Link>
+          <Link to={"/"}>
+            <Button variant="contained" color="warning">
+              خروج
+            </Button>
+          </Link>
         </Col>
       </Row>
     </Container>

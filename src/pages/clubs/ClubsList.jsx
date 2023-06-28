@@ -14,7 +14,7 @@ const ClubsList = () => {
 
   async function getClubsList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/clubs/list`, {
+      .get('/admin/clubs/list', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -72,7 +72,7 @@ const ClubsList = () => {
 
   const searchHandler = async () => {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/clubs/list/search`, {
+      .get('/admin/clubs/list/search', {
         withCredentials: true,
         params: { search },
       })

@@ -20,7 +20,7 @@ const EditReport = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/category/parents`, {
+      .get('/admin/category/parents', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -41,7 +41,7 @@ const EditReport = () => {
   async function getReport() {
 
     const getResult = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/reports/list/${id}`, {
+      .get(`/admin/reports/list/${id}`, {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -112,7 +112,7 @@ const EditReport = () => {
         Data.append("category", selectedCategory._id);
 
         const createResult = await axios
-          .patch(`${process.env.REACT_APP_API_URL}/admin/reports/update/${id}`, Data, {
+          .patch(`/admin/reports/update/${id}`, Data, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
           })

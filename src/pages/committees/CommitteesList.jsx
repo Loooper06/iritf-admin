@@ -14,7 +14,7 @@ const CommitteesList = () => {
 
   async function getCommitteesList() {
     const result = await axios
-      .get(`${process.env.REACT_APP_API_URL}/admin/committees/list`, {
+      .get('/admin/committees/list', {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -40,7 +40,7 @@ const CommitteesList = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const createResult = await axios
-          .delete(`${process.env.REACT_APP_API_URL}/admin/committees/remove/${committeeId}`, {
+          .delete(`/admin/committees/remove/${committeeId}`, {
             withCredentials: true,
           })
           .then((res) => res.data)
