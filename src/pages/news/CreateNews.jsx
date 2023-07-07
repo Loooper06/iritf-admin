@@ -171,7 +171,8 @@ const CreateNews = () => {
               editor={ClassicEditor}
               onChange={(event, editor) => {
                 const data = editor.getData();
-                setText(data);
+                const plainText = data.replace(/<[^>]+>/g, '');
+                setText(plainText);
               }}
             />
           </div>
@@ -183,7 +184,8 @@ const CreateNews = () => {
               editor={ClassicEditor}
               onChange={(event, editor) => {
                 const data = editor.getData();
-                setShort_text(data);
+                const plainText = data.replace(/<[^>]+>/g, '');
+                setShort_text(plainText);
               }}
             />
           </div>

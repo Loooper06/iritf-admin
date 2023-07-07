@@ -2,12 +2,17 @@ import { Col, Container, Form, Row } from "react-bootstrap";
 import { useEffect, useRef, useState } from "react";
 import { Button, Chip } from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
+import DatePicker from "react-multi-date-picker";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Tree from "react-d3-tree";
 import styles from "../../shared/assets/Tree.module.css";
+
+import persian from "react-date-object/calendars/persian"
+import persian_fa from "react-date-object/locales/persian_fa"
+import InputIcon from "react-multi-date-picker/components/input_icon"
 
 
 const CreateMatch = () => {
@@ -18,6 +23,7 @@ const CreateMatch = () => {
   const [files, setFiles] = useState([]);
   const [tags, setTags] = useState([]);
   const [description, setDescription] = useState([]);
+  const [expireDate, setExpireDate] = useState(new Date());
 
   const tagInput = useRef();
 
@@ -90,6 +96,7 @@ const CreateMatch = () => {
         Data.append("title", title);
         Data.append("category", selectedCategory._id);
         Data.append("description", description);
+        Data.append("expireDate", expireDate.toDate?.().toString());
 
         for (const image of images) {
           Data.append("files", image);
@@ -181,14 +188,19 @@ const CreateMatch = () => {
               onChange={(e) => setFiles(e.target.files)}
             />
           </Col>
-          <Col xs={6} style={{"margin":"20px 0"}}>
+          <Col xs={3} style={{"marginTop":"32px"}}>
+            <label>تاریخ انقضا :</label>
+            <DatePicker calendar={persian} locale={persian_fa} render={<InputIcon/>} value={expireDate} onChange={setExpireDate} />
+          </Col>
+          <Col xs={12} style={{"margin":"20px 0"}}>
             <label>توضیحات مسابقه :</label>
             <div className="mt-3">
               <CKEditor
                 editor={ClassicEditor}
                 onChange={(event, editor) => {
                   const data = editor.getData();
-                  setDescription(data);
+                  const plainText = data.replace(/<[^>]+>/g, '');
+                  setDescription(plainText);
                 }}
               />
             </div>

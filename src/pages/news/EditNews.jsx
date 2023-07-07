@@ -36,12 +36,10 @@ const EditNews = () => {
 
     if (getResult.statusCode === 200) {
       const { title, tags, text, short_text } = getResult.data.news;
-      const correctShortText = parseText(short_text);
-      const correctText = parseText(text);
       setTitle(title);
       setTags(tags);
-      setText(correctText);
-      setShort_text(correctShortText);
+      setText(text);
+      setShort_text(short_text);
     } else
       Swal.fire({
         text: getResult.message,
@@ -168,7 +166,8 @@ const EditNews = () => {
               editor={ClassicEditor}
               onChange={(event, editor) => {
                 const data = editor.getData();
-                setText(data);
+                const plainText = data.replace(/<[^>]+>/g, '');
+                setText(plainText);
               }}
               data = {text}
             />
@@ -181,7 +180,8 @@ const EditNews = () => {
               editor={ClassicEditor}
               onChange={(event, editor) => {
                 const data = editor.getData();
-                setShort_text(data);
+                const plainText = data.replace(/<[^>]+>/g, '');
+                setShort_text(plainText);
               }}
               data={short_text}
             />

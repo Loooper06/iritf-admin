@@ -77,7 +77,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                   <video className={styles.video} src={`${process.env.REACT_APP_API_URL}/${row.videos}`} controls />
                 ) : (
                   <Avatar
-                    alt="Remy Sharp"
+                    alt={row.title}
                     src={row.image}
                     sx={{ width: 56, height: 56 }}
                   />
@@ -89,13 +89,24 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                 {moment(row.createdAt).locale("fa").format("jYYYY/jMM/jDD")}
               </TableCell>
               <TableCell align="center">
-                <Button
-                  variant="contained"
-                  color="info"
-                  onClick={() => viewHandler(row._id)}
-                >
-                  مشاهده
-                </Button>
+                { origin === "matches" ? (
+                  <Link to={`/matches/list/Detail/${row._id}`}>
+                    <Button
+                      variant="contained"
+                      color="info"
+                    >
+                      مشاهده
+                    </Button>
+                  </Link>
+                ):(
+                  <Button
+                    variant="contained"
+                    color="info"
+                    onClick={() => viewHandler(row._id)}
+                  >
+                    مشاهده
+                  </Button>
+                )}
                 <Link to={`${row._id}`}>
                   <Button variant="contained" color="warning" className="mx-2">
                     ویرایش

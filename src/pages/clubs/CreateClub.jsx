@@ -193,14 +193,15 @@ const CreateClub = () => {
             onChange={(e) => setWebSiteLink(e.target.value)}
           />
           </Col>
-          <Col xs={6} style={{"margin":"20px 0"}}>
+          <Col xs={12} style={{"margin":"20px 0"}}>
             <label>متن باشگاه :</label>
             <div className="mt-3">
               <CKEditor
                 editor={ClassicEditor}
                 onChange={(event, editor) => {
                   const data = editor.getData();
-                  setText(data);
+                  const plainText = data.replace(/<[^>]+>/g, '');
+                  setText(plainText);
                 }}
               />
             </div>

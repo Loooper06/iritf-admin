@@ -14,6 +14,7 @@ import ReportsList from "./pages/image_reports/ReportsList.jsx";
 import CreateMatch from "./pages/matches/CreateMatch.jsx";
 import EditMatch from "./pages/matches/EditMatch.jsx";
 import MatchesList from "./pages/matches/MatchesList.jsx";
+import MatchDetail from "./pages/matches/MatchDetail.jsx";
 import CreateNews from "./pages/news/CreateNews.jsx";
 import EditNews from "./pages/news/EditNews.jsx";
 import NewsList from "./pages/news/NewsList.jsx";
@@ -81,6 +82,11 @@ const router = [
   {
     path: "/matches/list",
     element: <EditMatch/>,
+    children: [{ path: ":id" }],
+  },
+  {
+    path: "/matches/list/Detail",
+    element: <MatchDetail/>,
     children: [{ path: ":id" }],
   },
   { path: "/clubs/create", element: <CreateClub /> },

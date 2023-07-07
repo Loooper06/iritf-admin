@@ -148,3 +148,11 @@ aside {
 .rd3t-label__title {
   transform: translateX(30px);
 }
+
+.rmdp-input {
+  padding: 16px !important;
+}
+
+.detail-date{
+  width: fit-content;
+}

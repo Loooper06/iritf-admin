@@ -43,13 +43,6 @@ const EditClub = () => {
   }
 
   async function getClub() {
-    const parseText = (text) => {
-      const parser = new DOMParser();
-      const textHTML = parser.parseFromString(text, 'text/html');
-      const p = textHTML.querySelector('p');
-      const actualText = p.textContent;
-      return actualText;
-    }
 
     const getResult = await axios
       .get(`/admin/clubs/list/${id}`, {
@@ -60,11 +53,10 @@ const EditClub = () => {
 
     if (getResult.statusCode === 200) {
       const { title, category, tags, text} = getResult.data.club;
-      const correctText = parseText(text)
       setTitle(title);
       setSelectedCategory(category);
       setTags(tags);
-      setText(correctText);
+      setText(text);
     } else
       Swal.fire({
         text: getResult.message,
@@ -202,7 +194,8 @@ const EditClub = () => {
               editor={ClassicEditor}
               onChange={(event, editor) => {
                 const data = editor.getData();
-                setText(data);
+                const plainText = data.replace(/<[^>]+>/g, '');
+                setText(plainText);
               }}
             />
           </div>

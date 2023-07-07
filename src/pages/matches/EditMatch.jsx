@@ -9,6 +9,10 @@ import { Button, Chip } from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { Link } from 'react-router-dom';
+import DatePicker from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian"
+import persian_fa from "react-date-object/locales/persian_fa"
+import InputIcon from "react-multi-date-picker/components/input_icon"
 
 import { useParams } from 'react-router-dom';
 
@@ -18,6 +22,7 @@ const EditMatch = () => {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState([]);
   const [description, setDescription] = useState([]);
+  const [expireDate, setExpireDate] = useState();
 
   const { id } = useParams();
 
@@ -42,13 +47,6 @@ const EditMatch = () => {
   }
 
   async function getMatch() {
-    const parseText = (text) => {
-      const parser = new DOMParser();
-      const textHTML = parser.parseFromString(text, 'text/html');
-      const p = textHTML.querySelector('p');
-      const actualText = p.textContent;
-      return actualText;
-    }
 
     const getResult = await axios
       .get(`/admin/matches/list/${id}`, {
@@ -58,12 +56,12 @@ const EditMatch = () => {
       .catch((err) => err.response);
 
     if (getResult.statusCode === 200) {
-      const { title, category, tags, description } = getResult.data.match;
-      const correctText = parseText(description);
+      const { title, category, tags, description, expireDate } = getResult.data.match;
       setTitle(title);
       setTags(tags);
       setSelectedCategory(category);
-      setDescription(correctText)
+      setDescription(description);
+      setExpireDate(expireDate)
     } else
       Swal.fire({
         text: getResult.message,
@@ -123,6 +121,7 @@ const EditMatch = () => {
         Data.append("tags", tags);
         Data.append("category", selectedCategory._id);
         Data.append("description", description);
+        Data.append("expireDate", expireDate.toDate?.().toString());
 
         const createResult = await axios
           .patch(`/admin/matches/update/${id}`, Data, {
@@ -184,14 +183,19 @@ const EditMatch = () => {
             ))}
           </div>
         </Col>
-        <Col xs={6} className="mt-4">
+        <Col xs={3} style={{"marginTop":"32px"}}>
+          <label>تاریخ انقضا :</label>
+          <DatePicker calendar={persian} locale={persian_fa} render={<InputIcon/>} value={expireDate} onChange={setExpireDate} />
+        </Col>
+        <Col xs={12} className="mt-4">
           <label>توضیحات مسابقه :</label>
           <div className="mt-3">
             <CKEditor
               editor={ClassicEditor}
               onChange={(event, editor) => {
                 const data = editor.getData();
-                setDescription(data);
+                const plainText = data.replace(/<[^>]+>/g, '');
+                setDescription(plainText);
               }}
               data = {description}
             />
