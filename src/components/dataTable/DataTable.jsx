@@ -35,25 +35,37 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
     arrows:false,
   };
 
-  function createData(_id, image, videos, title, category, createdAt) {
-    return { _id, image, videos, title, category, createdAt };
+  function createData(_id, name, image, videos, title, category, createdAt, ) {
+    return { _id, name, image, videos, title, category, createdAt };
   }
 
   const rows = [];
   if (data !== undefined || data !== null){
     if (data.length){
-      data.map((item) => {
-        rows.push(
-          createData(
-            item._id,
-            item.imagesURL ? item.imagesURL[0] : item.imageURL ? item.imageURL : undefined,
-            item.videos ? item.videos[0] : undefined,
-            item.title,
-            item.category,
-            item.createdAt
-          )
-        );
-      });
+      if (origin !== "categories") {
+        data.map((item) => {
+          rows.push(
+            createData(
+              item._id,
+              item.imagesURL ? item.imagesURL[0] : item.imageURL ? item.imageURL : undefined,
+              item.videos ? item.videos[0] : undefined,
+              item.title,
+              item.category,
+              item.createdAt
+            )
+          );
+        });
+      }
+      else {
+        data.map((item) => {
+          rows.push(
+            createData(
+              item._id,
+              item.name
+            )
+          );
+        });
+      }
     }
   }
 
@@ -66,7 +78,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
   function Items({ currentItems }) {
     return (
       <>
-        {currentItems &&
+        {currentItems && origin !== "categories" &&
           currentItems.map((row) => (
             <TableRow
               key={row._id}
@@ -90,14 +102,16 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
               </TableCell>
               <TableCell align="center">
                 { origin === "matches" ? (
-                  <Link to={`/matches/list/Detail/${row._id}`}>
-                    <Button
-                      variant="contained"
-                      color="info"
-                    >
-                      مشاهده
-                    </Button>
-                  </Link>
+                  <>
+                    <Link to={`/matches/list/Detail/${row._id}`}>
+                      <Button
+                        variant="contained"
+                        color="info"
+                      >
+                        مشاهده
+                      </Button>
+                    </Link>
+                  </>
                 ):(
                   <Button
                     variant="contained"
@@ -210,6 +224,24 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
               </div>
             </Modal>
           }
+
+        {origin === "categories" && currentItems && (
+          currentItems.map((row) => (
+            <TableRow
+              key={row._id}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell align="right">{row.name}</TableCell>
+              <TableCell align="center">
+                <Button variant="contained" color="error"
+                  onClick={() => deleteHandler(row._id)}
+                >
+                  حذف
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))
+        )}
       </>
     );
   }
@@ -258,15 +290,27 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
         <Table sx={{ minWidth: 500 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              {origin === 'videos' ? (
-                <TableCell align="right">ویدیو</TableCell>
-              ) : (
-                <TableCell align="right">تصویر</TableCell>
-              )}
-              <TableCell align="right">عنوان</TableCell>
-              <TableCell align="right">دسته بندی</TableCell>
-              <TableCell align="right">تاریخ ایجاد</TableCell>
-              <TableCell align="center">عملیات</TableCell>
+              <>
+                {origin !== "categories" && (
+                  <>
+                    {origin === 'videos' ? (
+                      <TableCell align="right">ویدیو</TableCell>
+                    ) : (
+                      <TableCell align="right">تصویر</TableCell>
+                    )}
+                    <TableCell align="right">عنوان</TableCell>
+                    <TableCell align="right">دسته بندی</TableCell>
+                    <TableCell align="right">تاریخ ایجاد</TableCell>
+                    <TableCell align="center">عملیات</TableCell>
+                  </>
+                )}
+                {origin === "categories" && (
+                  <>
+                    <TableCell align="right">دسته بندی</TableCell>
+                    <TableCell align="center">عملیات</TableCell>
+                  </>
+                )}
+              </>
             </TableRow>
           </TableHead>
           <TableBody>
