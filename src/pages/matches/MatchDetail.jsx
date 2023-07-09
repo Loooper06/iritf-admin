@@ -3,8 +3,6 @@ import { Card, Col, Container, Row } from "react-bootstrap";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Button, Chip } from "@mui/material";
-import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
 import moment from "jalali-moment";
 import DataTable from '../../components/dataTable/DataTable';
@@ -82,7 +80,7 @@ const MatchDetail = () => {
         </Card>
       )}
       <Row className='mt-4'>
-        <SectionTitle title="ثبت نام کنندگان" />
+        <SectionTitle title={`ثبت نام کنندگان (${match && match.registrations.length})`} />
       </Row>
       <Row className="mt-4">
         {match && <DataTable data={match.registrations} origin="registrations" faOrigin="مسابقه" />}
