@@ -29,7 +29,7 @@ const SideBar = () => {
       id: "1",
       title: "دسته بندی",
       icon: <CategoryIcon />,
-      path: "/news",
+      path: "/category",
       children: [
         { id: "1.1", title: "افزودن دسته بندی", path: "/category/create" },
         { id: "1.2", title: "لیست دسته بندی", path: "/category/list" },

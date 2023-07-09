@@ -7,6 +7,7 @@ import { Button, Chip } from "@mui/material";
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
 import moment from "jalali-moment";
+import DataTable from '../../components/dataTable/DataTable';
 
 const MatchDetail = () => {
   const [match, setMatch] = useState(); 
@@ -24,6 +25,7 @@ const MatchDetail = () => {
 
     if (getResult.statusCode === 200) {
       setMatch(getResult.data.match);
+      console.log(getResult)
     } else
       Swal.fire({
         text: getResult.message,
@@ -79,6 +81,9 @@ const MatchDetail = () => {
           </Card.Body>
         </Card>
       )}
+      <Row className="mt-4">
+        {match && <DataTable data={match.registrations} origin="registrations" faOrigin="مسابقه" />}
+      </Row>
     </Container>
   );
 }

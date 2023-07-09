@@ -35,14 +35,22 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
     arrows:false,
   };
 
-  function createData(_id, name, image, videos, title, category, createdAt, ) {
-    return { _id, name, image, videos, title, category, createdAt };
+  function createData(_id, image, videos, title, category, createdAt, ) {
+    return { _id, image, videos, title, category, createdAt };
+  }
+
+  function createDataForCategory(_id, name) {
+    return { _id, name};
+  }
+
+  function createDataForRegistrations(_id, image ,first_name, last_name, mobile, nationalCode, createdAt) {
+    return { _id, image ,first_name, last_name, mobile, nationalCode, createdAt };
   }
 
   const rows = [];
   if (data !== undefined || data !== null){
     if (data.length){
-      if (origin !== "categories") {
+      if (origin !== "categories" && origin !== "registrations") {
         data.map((item) => {
           rows.push(
             createData(
@@ -56,12 +64,28 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
           );
         });
       }
-      else {
+      else if (origin === "categories") {
         data.map((item) => {
           rows.push(
-            createData(
+            createDataForCategory(
               item._id,
               item.name
+            )
+          );
+        });
+      }
+      else if (origin === "registrations") {
+        data.map((item) => {
+          console.log(item)
+          rows.push(
+            createDataForRegistrations(
+              item._id,
+              item.image ? item.image : undefined,
+              item.first_name,
+              item.last_name,
+              item.mobile,
+              item.nationalCode,
+              item.createdAt,
             )
           );
         });
@@ -78,7 +102,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
   function Items({ currentItems }) {
     return (
       <>
-        {currentItems && origin !== "categories" &&
+        {currentItems && origin !== "categories" && origin !== "registrations" &&
           currentItems.map((row) => (
             <TableRow
               key={row._id}
@@ -134,97 +158,100 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
               </TableCell>
             </TableRow>
           ))}
-          {Object.keys(selectedItem).length !== 0 &&
-            <Modal
-              title={`مشاهده ${faOrigin}`}
-              visible={modalVisible}
-              onCancel={() => setModalVisible(false)}
-              footer={null}
-              width={1000}
-              style={{ top: 40 }}
-            >
-              <hr />
-              <div className={styles.itemData}>
-                {origin === 'videos' ? (
-                  <div className={styles.videosSlider}>
-                    <Slider ref={sliderRef} {...settings}>
-                      {selectedItem.videos ? selectedItem.videos.map((videoUrl) => (
-                        <div className={styles.videoContainer} key={videoUrl}>
-                          <video className={styles.modalVideo} src={`${process.env.REACT_APP_API_URL}/${videoUrl}`} controls />
-                        </div>
-                      )):
-                        <div className={styles.contentStyle}>
-                          <img
-                            alt="default-image"
-                            style={{"width":"100%", "height":"400px", "object-fit":"cover"}}
-                            src={DefaultImage}
-                          />
-                        </div>
-                      }
-                    </Slider>
-                  </div>
-                ) : (
-                  <div className={styles.carouselContainer}>
-                    <div className={styles.carousel}>
-                      <Carousel>
-                        {selectedItem.imagesURL ? selectedItem.imagesURL.map((imageUrl) => (
-                          <div className={styles.contentStyle} key={imageUrl}>
-                            <img className={styles.carouselImage} src={imageUrl} alt="carousel-item" />
-                          </div>
-                        )): 
-                          <div className={styles.contentStyle}>
-                            <img
-                              alt="default-image"
-                              style={{"width":"100%", "height":"400px", "object-fit":"cover"}}
-                              src={DefaultImage}
-                            />
-                          </div>
-                        }
-                      </Carousel>
-                    </div>
-                  </div>
-                )}
-                <h3 style={{"marginBottom":"24px"}}>{selectedItem.title}</h3>
-                <div className="d-flex align-items-center">
-                  <h6 className="px-2 pt-1">تاریخ ایجاد :</h6>
-                  {moment(selectedItem.createdAt).locale("fa").format("jYYYY/jMM/jDD")}
-                </div>
-                <hr />
-                <div>
-                  <h5>دسته بندی :</h5>
-                  <h6 style={{"margin":"0"}}>{selectedItem.category.name}</h6>
-                </div>
-                <hr />
-                <div>
-                  <h5>برچسب ها :</h5>   
-                  <ol>
-                    {selectedItem.tags.map((tag) => (
-                      <li style={{"listStyle":"unset"}} key={tag}>{tag}</li>
-                    ))}
-                  </ol>
-                </div>
-                {selectedItem.short_text && (
-                  <>
+          {origin !== "registrations" && (
+            <>
+                {Object.keys(selectedItem).length !== 0 &&
+                  <Modal
+                    title={`مشاهده ${faOrigin}`}
+                    visible={modalVisible}
+                    onCancel={() => setModalVisible(false)}
+                    footer={null}
+                    width={1000}
+                    style={{ top: 40 }}
+                  >
                     <hr />
-                    <div style={{"marginBottom":"16px"}} className="short-text">
-                      <h5>متن کوتاه خبر :</h5>
-                      <div style={{"marginTop":"12px", "lineHeight":"1.8"}} dangerouslySetInnerHTML={{ __html: selectedItem.short_text }} />
+                    <div className={styles.itemData}>
+                      {origin === 'videos' ? (
+                        <div className={styles.videosSlider}>
+                          <Slider ref={sliderRef} {...settings}>
+                            {selectedItem.videos ? selectedItem.videos.map((videoUrl) => (
+                              <div className={styles.videoContainer} key={videoUrl}>
+                                <video className={styles.modalVideo} src={`${process.env.REACT_APP_API_URL}/${videoUrl}`} controls />
+                              </div>
+                            )):
+                              <div className={styles.contentStyle}>
+                                <img
+                                  alt="default-image"
+                                  style={{"width":"100%", "height":"400px", "object-fit":"cover"}}
+                                  src={DefaultImage}
+                                />
+                              </div>
+                            }
+                          </Slider>
+                        </div>
+                      ) : (
+                        <div className={styles.carouselContainer}>
+                          <div className={styles.carousel}>
+                            <Carousel>
+                              {selectedItem.imagesURL ? selectedItem.imagesURL.map((imageUrl) => (
+                                <div className={styles.contentStyle} key={imageUrl}>
+                                  <img className={styles.carouselImage} src={imageUrl} alt="carousel-item" />
+                                </div>
+                              )): 
+                                <div className={styles.contentStyle}>
+                                  <img
+                                    alt="default-image"
+                                    style={{"width":"100%", "height":"400px", "object-fit":"cover"}}
+                                    src={DefaultImage}
+                                  />
+                                </div>
+                              }
+                            </Carousel>
+                          </div>
+                        </div>
+                      )}
+                      <h3 style={{"marginBottom":"24px"}}>{selectedItem.title}</h3>
+                      <div className="d-flex align-items-center">
+                        <h6 className="px-2 pt-1">تاریخ ایجاد :</h6>
+                        {moment(selectedItem.createdAt).locale("fa").format("jYYYY/jMM/jDD")}
+                      </div>
+                      <hr />
+                      <div>
+                        <h5>دسته بندی :</h5>
+                        <h6 style={{"margin":"0"}}>{selectedItem.category.name}</h6>
+                      </div>
+                      <hr />
+                      <div>
+                        <h5>برچسب ها :</h5>   
+                        <ol>
+                          {selectedItem.tags.map((tag) => (
+                            <li style={{"listStyle":"unset"}} key={tag}>{tag}</li>
+                          ))}
+                        </ol>
+                      </div>
+                      {selectedItem.short_text && (
+                        <>
+                          <hr />
+                          <div style={{"marginBottom":"16px"}} className="short-text">
+                            <h5>متن کوتاه خبر :</h5>
+                            <div style={{"marginTop":"12px", "lineHeight":"1.8"}} dangerouslySetInnerHTML={{ __html: selectedItem.short_text }} />
+                          </div>
+                        </>
+                      )}
+                      {selectedItem.text && (
+                        <>
+                          <hr />
+                          <div style={{"marginBottom":"16px", "lineHeight":"1.8"}} className="text">
+                            <h5>متن خبر :</h5>
+                            <div style={{"marginTop":"12px"}}  dangerouslySetInnerHTML={{ __html: selectedItem.text }} />
+                          </div>
+                        </>
+                      )}
                     </div>
-                  </>
-                )}
-                {selectedItem.text && (
-                  <>
-                    <hr />
-                    <div style={{"marginBottom":"16px", "lineHeight":"1.8"}} className="text">
-                      <h5>متن خبر :</h5>
-                      <div style={{"marginTop":"12px"}}  dangerouslySetInnerHTML={{ __html: selectedItem.text }} />
-                    </div>
-                  </>
-                )}
-              </div>
-            </Modal>
-          }
-
+                  </Modal>
+                }
+            </>
+          )}
         {origin === "categories" && currentItems && (
           currentItems.map((row) => (
             <TableRow
@@ -242,6 +269,97 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
             </TableRow>
           ))
         )}
+        {origin === "registrations" && currentItems && 
+          currentItems.map((row) => (
+            <TableRow
+                key={row._id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+              <TableCell align="right">
+                <Avatar
+                  alt={row.first_name}
+                  src={row.image}
+                  sx={{ width: 56, height: 56 }}
+                />
+              </TableCell>
+              <TableCell align="right">{row.first_name}</TableCell>
+              <TableCell align="right">{row.last_name}</TableCell>
+              <TableCell align="right">{row.mobile}</TableCell>
+              <TableCell align="right">{row.nationalCode}</TableCell>
+              <TableCell align="right">{moment(row.createdAt).locale("fa").format("jYYYY/jMM/jDD")}</TableCell>
+              <TableCell align="center">
+                <Button
+                  variant="contained"
+                  color="info"
+                  onClick={() => viewHandler(row._id)}
+                >
+                  مشاهده
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+          {origin === "registrations" && (
+            <>
+              {Object.keys(selectedItem).length !== 0 &&
+                <Modal
+                  title={`مشاهده ${faOrigin}`}
+                  visible={modalVisible}
+                  onCancel={() => setModalVisible(false)}
+                  footer={null}
+                  width={1000}
+                  style={{ top: 40 }}
+                >
+                  <hr />
+                  <div className={styles.itemData}>
+                    <div className={styles.carouselContainer}>
+                      <div className={styles.carousel}>
+                        <Carousel>
+                          {selectedItem.image ? (
+                            <div className={styles.contentStyle} key={selectedItem._id}>
+                              <img className={styles.carouselImage} src={selectedItem.image} alt="carousel-item" />
+                            </div>
+                          ): 
+                            <div className={styles.contentStyle}>
+                              <img
+                                alt="default-image"
+                                style={{"width":"100%", "height":"400px", "object-fit":"cover"}}
+                                src={DefaultImage}
+                              />
+                            </div>
+                          }
+                        </Carousel>
+                      </div>
+                    </div>
+                    <h3 style={{"marginBottom":"24px"}}>{selectedItem.title}</h3>
+                    <div className="d-flex align-items-center">
+                      <h6 className="px-2 pt-1">تاریخ ایجاد :</h6>
+                      {moment(selectedItem.createdAt).locale("fa").format("jYYYY/jMM/jDD")}
+                    </div>
+                    <hr />
+                    <div>
+                      <h6>نام</h6>
+                      <h5 style={{"margin":"0"}}>{selectedItem.first_name}</h5>
+                    </div>
+                    <hr />
+                    <div>
+                      <h6>نام خانوادگی</h6>
+                      <h5 style={{"margin":"0"}}>{selectedItem.last_name}</h5>
+                    </div>
+                    <hr />
+                    <div>
+                      <h6>شماره تلفن</h6>
+                      <h5 style={{"margin":"0"}}>{selectedItem.mobile}</h5>
+                    </div>
+                    <hr />
+                    <div>
+                      <h6>کدملی</h6>
+                      <h5 style={{"margin":"0"}}>{selectedItem.nationalCode}</h5>
+                    </div>
+                  </div>
+                </Modal>
+              }
+            </>
+          )}
       </>
     );
   }
@@ -291,7 +409,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
           <TableHead>
             <TableRow>
               <>
-                {origin !== "categories" && (
+                {origin !== "categories" && origin !== "registrations" && (
                   <>
                     {origin === 'videos' ? (
                       <TableCell align="right">ویدیو</TableCell>
@@ -307,6 +425,18 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                 {origin === "categories" && (
                   <>
                     <TableCell align="right">دسته بندی</TableCell>
+                    <TableCell align="center">عملیات</TableCell>
+                  </>
+                )}
+
+                {origin === "registrations" && (
+                  <>
+                    <TableCell align="right">تصویر فیش</TableCell>
+                    <TableCell align="right">نام</TableCell>
+                    <TableCell align="right">نام خانوادگی</TableCell>
+                    <TableCell align="right">شماره تلفن</TableCell>
+                    <TableCell align="right">کدملی</TableCell>
+                    <TableCell align="right">تاریخ ایجاد</TableCell>
                     <TableCell align="center">عملیات</TableCell>
                   </>
                 )}

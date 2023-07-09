@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Chip } from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import DatePicker from "react-multi-date-picker";
+import TimePicker from "react-multi-date-picker/plugins/time_picker";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import axios from "axios";
@@ -10,10 +11,9 @@ import Swal from "sweetalert2";
 import Tree from "react-d3-tree";
 import styles from "../../shared/assets/Tree.module.css";
 
-import persian from "react-date-object/calendars/persian"
-import persian_fa from "react-date-object/locales/persian_fa"
-import InputIcon from "react-multi-date-picker/components/input_icon"
-
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
+import InputIcon from "react-multi-date-picker/components/input_icon";
 
 const CreateMatch = () => {
   const [categories, setCategories] = useState([]);
@@ -27,10 +27,9 @@ const CreateMatch = () => {
 
   const tagInput = useRef();
 
-
   async function getCategories() {
     const getResult = await axios
-      .get('/admin/category/parents', {
+      .get("/admin/category/parents", {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -109,7 +108,7 @@ const CreateMatch = () => {
         Data.append("tags", tags);
 
         const createResult = await axios
-          .post('/admin/matches/create', Data, {
+          .post("/admin/matches/create", Data, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
           })
@@ -178,7 +177,7 @@ const CreateMatch = () => {
           </div>
         </Col>
         <Row xs={12}>
-          <Col xs={3} style={{"margin":"20px 0"}}>
+          <Col xs={3} style={{ margin: "20px 0" }}>
             <Form.Label htmlFor="matchesFiles">فایل مسابقه (pdf.) :</Form.Label>
             <Form.Control
               type="file"
@@ -188,18 +187,28 @@ const CreateMatch = () => {
               onChange={(e) => setFiles(e.target.files)}
             />
           </Col>
-          <Col xs={3} style={{"marginTop":"32px"}}>
+          <Col xs={3} style={{ marginTop: "32px" }}>
             <label>تاریخ انقضا :</label>
-            <DatePicker calendar={persian} locale={persian_fa} render={<InputIcon/>} value={expireDate} onChange={setExpireDate} />
+            <DatePicker
+              className="rmdp-mobile"
+              calendar={persian}
+              locale={persian_fa}
+              format="YYYY/MM/DD HH:mm:ss"
+              plugins={[<TimePicker position="bottom" />]}
+              render={<InputIcon />}
+              minDate={new Date()}
+              value={expireDate}
+              onChange={setExpireDate}
+            />
           </Col>
-          <Col xs={12} style={{"margin":"20px 0"}}>
+          <Col xs={12} style={{ margin: "20px 0" }}>
             <label>توضیحات مسابقه :</label>
             <div className="mt-3">
               <CKEditor
                 editor={ClassicEditor}
                 onChange={(event, editor) => {
                   const data = editor.getData();
-                  const plainText = data.replace(/<[^>]+>/g, '');
+                  const plainText = data.replace(/<[^>]+>/g, "");
                   setDescription(plainText);
                 }}
               />
