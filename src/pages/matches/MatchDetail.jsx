@@ -81,6 +81,9 @@ const MatchDetail = () => {
           </Card.Body>
         </Card>
       )}
+      <Row className='mt-4'>
+        <SectionTitle title="ثبت نام کنندگان" />
+      </Row>
       <Row className="mt-4">
         {match && <DataTable data={match.registrations} origin="registrations" faOrigin="مسابقه" />}
       </Row>
