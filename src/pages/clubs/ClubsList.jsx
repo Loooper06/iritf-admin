@@ -19,7 +19,7 @@ const ClubsList = () => {
       })
       .then((res) => res.data)
       .catch((err) => err.response.data);
-    if (result.statusCode === 200) setClubs(result.data.matches);
+    if (result.statusCode === 200) setClubs(result.data.clubs);
     else {
       Swal.fire({
         text: result.message,
@@ -78,7 +78,7 @@ const ClubsList = () => {
       })
       .then((res) => res.data)
       .catch((err) => err.response.data);
-    if (result.statusCode === 200) setClubs(result.data.matches);
+    if (result.statusCode === 200) setClubs(result.data.clubs);
     else {
       Swal.fire({
         text: result.message,
