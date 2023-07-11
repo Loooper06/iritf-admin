@@ -61,7 +61,7 @@ const CreateCategory = () => {
 
   useEffect(() => {
     getParentCategories();
-  });
+  },[]);
 
   useEffect(() => {
     getCategories();
