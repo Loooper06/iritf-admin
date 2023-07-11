@@ -42,9 +42,11 @@ const MatchDetail = () => {
       </Row>
       {match && (
         <Card className="mt-3">
-          <Row>
-            <img src={match.imageURL} alt={match.title} />
-          </Row>
+          <Card.Img 
+            className='p-3'
+            src={match.imageURL}
+            alt={match.title}
+          />
           <Card.Body>
             <Row>
               <h5 className='mb-4 mt-2'>{match.title}</h5>
@@ -83,7 +85,7 @@ const MatchDetail = () => {
         <SectionTitle title={`ثبت نام کنندگان (${match && match.registrations.length})`} />
       </Row>
       <Row className="mt-4">
-        {match && <DataTable data={match.registrations} origin="registrations" faOrigin="مسابقه" />}
+        {match && <DataTable data={match.registrations} origin="registrations" faOrigin="شرکت کننده" />}
       </Row>
     </Container>
   );

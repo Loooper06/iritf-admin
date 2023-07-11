@@ -32,7 +32,7 @@ const EditClub = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "اخبار" && item.parent === null) return item;
+        if (item.name === "باشگاه ها" && item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else

@@ -81,7 +81,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
           rows.push(
             createDataForRegistrations(
               item._id,
-              item.image ? item.image : undefined,
+              item.imageURL ? item.imageURL : undefined,
               item.first_name,
               item.last_name,
               item.mobile,
@@ -325,9 +325,9 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                     <div className={styles.carouselContainer}>
                       <div className={styles.carousel}>
                         <Slider>
-                          {selectedItem.image ? (
+                          {selectedItem.imageURL ? (
                             <div className={styles.contentStyle} key={selectedItem._id}>
-                              <img className={styles.carouselImage} src={selectedItem.image} alt="carousel-item" />
+                              <img className={styles.carouselImage} src={selectedItem.imageURL} alt="carousel-item"/>
                             </div>
                           ): 
                             <div className={styles.contentStyle}>
