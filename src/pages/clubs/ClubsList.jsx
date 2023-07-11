@@ -124,7 +124,7 @@ const ClubsList = () => {
         </div>
       </Row>
       <Row className="mt-4">
-        {clubs && <DataTable data={clubs} origin="matches" faOrigin="باشگاه" deleteHandler={deleteClubHandler} />}
+        {clubs && <DataTable data={clubs} origin="clubs" faOrigin="باشگاه" deleteHandler={deleteClubHandler} />}
       </Row>
     </Container>
   );

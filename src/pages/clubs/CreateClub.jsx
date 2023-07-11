@@ -193,6 +193,8 @@ const CreateClub = () => {
             onChange={(e) => setWebSiteLink(e.target.value)}
           />
           </Col>
+        </Row>
+        <Row>
           <Col xs={12} style={{"margin":"20px 0"}}>
             <label>متن باشگاه :</label>
             <div className="mt-3">

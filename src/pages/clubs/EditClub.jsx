@@ -178,7 +178,7 @@ const EditClub = () => {
             ))}
           </div>
         </Col>
-        <Col xs={3} style={{"margin":"20px 0"}}>
+        <Col xs={3}>
             <label>لینک سایت :</label>
             <input
             type="text"
@@ -186,8 +186,8 @@ const EditClub = () => {
             value={webSiteLink}
             onChange={(e) => setWebSiteLink(e.target.value)}
           />
-        </Col>  
-        <Col xs={6} style={{"margin":"20px 0"}}>
+        </Col>
+        <Col xs={12} style={{"margin":"20px 0"}}>
           <label>متن باشگاه :</label>
           <div className="mt-3">
             <CKEditor

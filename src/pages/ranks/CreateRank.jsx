@@ -29,7 +29,7 @@ const CreateRank = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === "رنکینگ ها" && item.parent === null) return item;
+        if (item.name === "رنکینگ" && item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else

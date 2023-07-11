@@ -9,7 +9,7 @@ import Paper from "@mui/material/Paper";
 import moment from "jalali-moment";
 import ReactPaginate from "react-paginate";
 import { Avatar, Button } from "@mui/material";
-import { Modal, Carousel } from 'antd';
+import { Modal } from 'antd';
 import Slider from "react-slick";
 import DefaultImage from "../../shared/assets/images/default-image.jpeg"
 import { Link } from 'react-router-dom';
@@ -63,6 +63,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
             )
           );
         });
+        console.log(rows)
       }
       else if (origin === "categories") {
         data.map((item) => {
@@ -95,6 +96,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
 
   const viewHandler = (ID) => {
     const item = data.find((item) => item._id === ID);
+    console.log(item)
     setSelectedItem(item);
     setModalVisible(true);
   };
@@ -192,21 +194,30 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                       ) : (
                         <div className={styles.carouselContainer}>
                           <div className={styles.carousel}>
-                            <Carousel>
-                              {selectedItem.imagesURL ? selectedItem.imagesURL.map((imageUrl) => (
-                                <div className={styles.contentStyle} key={imageUrl}>
-                                  <img className={styles.carouselImage} src={imageUrl} alt="carousel-item" />
+                            <Slider ref={sliderRef} {...settings}>
+                              {selectedItem.imagesURL &&
+                                selectedItem.imagesURL.map((imageUrl) => (
+                                  <div className={styles.contentStyle} key={imageUrl}>
+                                    <img className={styles.carouselImage} src={imageUrl} alt="carousel-item" />
+                                  </div>
+                                ))
+                              }
+                              
+                              {selectedItem.imageURL && (
+                                <div className={styles.contentStyle} key={selectedItem.imageURL}>
+                                  <img className={styles.carouselImage} src={selectedItem.imageURL} alt="carousel-item" />
                                 </div>
-                              )): 
-                                <div className={styles.contentStyle}>
+                              )}
+
+                                {!selectedItem.imageURL && !selectedItem.imagesURL && 
+                                (<div className={styles.contentStyle}>
                                   <img
                                     alt="default-image"
                                     style={{"width":"100%", "height":"400px", "object-fit":"cover"}}
                                     src={DefaultImage}
                                   />
-                                </div>
-                              }
-                            </Carousel>
+                                </div>)}
+                            </Slider>
                           </div>
                         </div>
                       )}
@@ -313,7 +324,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                   <div className={styles.itemData}>
                     <div className={styles.carouselContainer}>
                       <div className={styles.carousel}>
-                        <Carousel>
+                        <Slider>
                           {selectedItem.image ? (
                             <div className={styles.contentStyle} key={selectedItem._id}>
                               <img className={styles.carouselImage} src={selectedItem.image} alt="carousel-item" />
@@ -327,7 +338,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                               />
                             </div>
                           }
-                        </Carousel>
+                        </Slider>
                       </div>
                     </div>
                     <h3 style={{"marginBottom":"24px"}}>{selectedItem.title}</h3>
