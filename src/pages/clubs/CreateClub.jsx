@@ -1,18 +1,21 @@
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { useEffect, useRef, useState } from "react";
-import { Button, Chip } from "@mui/material";
+import {
+  Button,
+  Chip,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+} from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
-import styles from "../../shared/assets/Tree.module.css";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Tree from "react-d3-tree";
-
 
 const CreateClub = () => {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState([]);
   const [title, setTitle] = useState("");
   const [images, setImages] = useState([]);
   const [files, setFiles] = useState([]);
@@ -22,10 +25,9 @@ const CreateClub = () => {
 
   const tagInput = useRef();
 
-
   async function getCategories() {
     const getResult = await axios
-      .get('/admin/category/parents', {
+      .get("/admin/category/parents", {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -89,7 +91,9 @@ const CreateClub = () => {
       if (result.isConfirmed) {
         const Data = new FormData();
         Data.append("title", title);
-        Data.append("category", selectedCategory._id);
+        for (const category of selectedCategory) {
+          Data.append("category", category);
+        }
         Data.append("text", text);
         Data.append("siteLink", webSiteLink);
 
@@ -104,7 +108,7 @@ const CreateClub = () => {
         Data.append("tags", tags);
 
         const createResult = await axios
-          .post('/admin/clubs/create', Data, {
+          .post("/admin/clubs/create", Data, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
           })
@@ -124,6 +128,46 @@ const CreateClub = () => {
         }
       }
     });
+  };
+
+  const selectCategoryHandler = (ID) => {
+    let selecteds = [...selectedCategory];
+    if (selecteds.includes(String(ID))) {
+      selecteds = selecteds.filter((id) => id !== ID);
+    } else {
+      selecteds.push(ID);
+    }
+    setSelectedCategory(selecteds);
+  };
+
+  const RenderCategoryChild = ({ data }) => {
+    return (
+      <div className="ms-2 border-start">
+        {data.map((parent) => {
+          return (
+            <div key={parent._id}>
+              <FormControlLabel
+                value={parent._id}
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={
+                      selectedCategory.includes(parent._id) ? true : false
+                    }
+                    onChange={(e) => selectCategoryHandler(e.target.value)}
+                  />
+                }
+                label={parent.name}
+              />
+
+              {parent.children && (
+                <RenderCategoryChild data={parent.children} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -174,7 +218,7 @@ const CreateClub = () => {
           </div>
         </Col>
         <Row xs={12}>
-          <Col xs={3} style={{"margin":"20px 0"}}>
+          <Col xs={3} style={{ margin: "20px 0" }}>
             <Form.Label htmlFor="matchesFiles">فایل باشگاه (pdf.) :</Form.Label>
             <Form.Control
               type="file"
@@ -184,55 +228,41 @@ const CreateClub = () => {
               onChange={(e) => setFiles(e.target.files)}
             />
           </Col>
-          <Col xs={3} style={{"margin":"20px 0"}}>
+          <Col xs={3} style={{ margin: "20px 0" }}>
             <label>لینک سایت :</label>
             <input
-            type="text"
-            className="solid_input"
-            value={webSiteLink}
-            onChange={(e) => setWebSiteLink(e.target.value)}
-          />
+              type="text"
+              className="solid_input"
+              value={webSiteLink}
+              onChange={(e) => setWebSiteLink(e.target.value)}
+            />
           </Col>
         </Row>
         <Row>
-          <Col xs={12} style={{"margin":"20px 0"}}>
+          <Col xs={12} style={{ margin: "20px 0" }}>
             <label>متن باشگاه :</label>
             <div className="mt-3">
               <CKEditor
                 editor={ClassicEditor}
                 onChange={(event, editor) => {
                   const data = editor.getData();
-                  const plainText = data.replace(/<[^>]+>/g, '');
+                  const plainText = data.replace(/<[^>]+>/g, "");
                   setText(plainText);
                 }}
               />
             </div>
           </Col>
         </Row>
-        <Col xs={6} className="mt-4">
-          <label>دسته بندی :</label>
-          {categories.length && (
-            <div
-              id="treeWrapper"
-              style={{ width: "100%", height: "30rem" }}
-              className="border rounded mt-3"
-            >
-              <Tree
-                data={categories}
-                rootNodeClassName={styles.node__root}
-                branchNodeClassName={styles.node__branch}
-                leafNodeClassName={styles.node__leaf}
-                orientation="vertical"
-                onNodeClick={(node) => setSelectedCategory(node.data)}
-                collapsible={false}
-              />
+        {categories.length > 0 && (
+          <Col xs={6}>
+            <label>انتخاب دسته بندی : </label>
+            <div className="border rounded-3 mt-3 py-2">
+              <FormGroup>
+                <RenderCategoryChild data={categories} />
+              </FormGroup>
             </div>
-          )}
-        </Col>
-        <Col xs={2} className="mt-4">
-          <label>دسته بندی انتخاب شده :</label>
-          <div className="solid_input">{selectedCategory.name}</div>
-        </Col>
+          </Col>
+        )}
         <Col xs={12} className="text-start mt-4">
           <Button
             variant="contained"

@@ -3,15 +3,19 @@ import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Tree from "react-d3-tree";
-import styles from "../../shared/assets/Tree.module.css";
-import { Button, Chip } from "@mui/material";
+import {
+  Button,
+  Chip,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+} from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const CreateNews = () => {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState([]);
   const [title, setTitle] = useState("");
   const [images, setImages] = useState([]);
   const [tags, setTags] = useState([]);
@@ -20,7 +24,7 @@ const CreateNews = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get('/admin/category/parents', {
+      .get("/admin/category/parents", {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -86,7 +90,9 @@ const CreateNews = () => {
       if (result.isConfirmed) {
         const Data = new FormData();
         Data.append("title", title);
-        Data.append("category", selectedCategory._id);
+        for (const category of selectedCategory) {
+          Data.append("category", category);
+        }
         for (const image of images) {
           Data.append("images", image);
         }
@@ -95,7 +101,7 @@ const CreateNews = () => {
         Data.append("short_text", short_text);
 
         const createResult = await axios
-          .post('/admin/news/create', Data, {
+          .post("/admin/news/create", Data, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
           })
@@ -115,6 +121,46 @@ const CreateNews = () => {
         }
       }
     });
+  };
+
+  const selectCategoryHandler = (ID) => {
+    let selecteds = [...selectedCategory];
+    if (selecteds.includes(String(ID))) {
+      selecteds = selecteds.filter((id) => id !== ID);
+    } else {
+      selecteds.push(ID);
+    }
+    setSelectedCategory(selecteds);
+  };
+
+  const RenderCategoryChild = ({ data }) => {
+    return (
+      <div className="ms-4 border-start">
+        {data.map((parent) => {
+          return (
+            <div key={parent._id}>
+              <FormControlLabel
+                value={parent._id}
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={
+                      selectedCategory.includes(parent._id) ? true : false
+                    }
+                    onChange={(e) => selectCategoryHandler(e.target.value)}
+                  />
+                }
+                label={parent.name}
+              />
+
+              {parent.children && (
+                <RenderCategoryChild data={parent.children} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -171,7 +217,7 @@ const CreateNews = () => {
               editor={ClassicEditor}
               onChange={(event, editor) => {
                 const data = editor.getData();
-                const plainText = data.replace(/<[^>]+>/g, '');
+                const plainText = data.replace(/<[^>]+>/g, "");
                 setText(plainText);
               }}
             />
@@ -184,36 +230,22 @@ const CreateNews = () => {
               editor={ClassicEditor}
               onChange={(event, editor) => {
                 const data = editor.getData();
-                const plainText = data.replace(/<[^>]+>/g, '');
+                const plainText = data.replace(/<[^>]+>/g, "");
                 setShort_text(plainText);
               }}
             />
           </div>
         </Col>
-        <Col xs={6} className="mt-4">
-          <label>دسته بندی :</label>
-          {categories.length && (
-            <div
-              id="treeWrapper"
-              style={{ width: "100%", height: "30rem" }}
-              className="border rounded mt-3"
-            >
-              <Tree
-                data={categories}
-                rootNodeClassName={styles.node__root}
-                branchNodeClassName={styles.node__branch}
-                leafNodeClassName={styles.node__leaf}
-                orientation="vertical"
-                onNodeClick={(node) => setSelectedCategory(node.data)}
-                collapsible={false}
-              />
+        {categories.length > 0 && (
+          <Col xs={6}>
+            <label>انتخاب دسته بندی : </label>
+            <div className="border rounded-3 mt-3 py-2">
+              <FormGroup>
+                <RenderCategoryChild data={categories} />
+              </FormGroup>
             </div>
-          )}
-        </Col>
-        <Col xs={2} className="mt-4">
-          <label>دسته بندی انتخاب شده :</label>
-          <div className="solid_input">{selectedCategory.name}</div>
-        </Col>
+          </Col>
+        )}
         <Col xs={12} className="text-start mt-4">
           <Button
             variant="contained"

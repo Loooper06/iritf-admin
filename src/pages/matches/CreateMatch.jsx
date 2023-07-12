@@ -1,6 +1,12 @@
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { useEffect, useRef, useState } from "react";
-import { Button, Chip } from "@mui/material";
+import {
+  Button,
+  Chip,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+} from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import DatePicker from "react-multi-date-picker";
 import TimePicker from "react-multi-date-picker/plugins/time_picker";
@@ -8,8 +14,6 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Tree from "react-d3-tree";
-import styles from "../../shared/assets/Tree.module.css";
 
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
@@ -17,7 +21,7 @@ import InputIcon from "react-multi-date-picker/components/input_icon";
 
 const CreateMatch = () => {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState([]);
   const [title, setTitle] = useState("");
   const [images, setImages] = useState([]);
   const [files, setFiles] = useState([]);
@@ -93,7 +97,9 @@ const CreateMatch = () => {
       if (result.isConfirmed) {
         const Data = new FormData();
         Data.append("title", title);
-        Data.append("category", selectedCategory._id);
+        for (const category of selectedCategory) {
+          Data.append("category", category);
+        }
         Data.append("description", description);
         Data.append("expireDate", expireDate.toDate?.().toString());
 
@@ -128,6 +134,46 @@ const CreateMatch = () => {
         }
       }
     });
+  };
+
+  const selectCategoryHandler = (ID) => {
+    let selecteds = [...selectedCategory];
+    if (selecteds.includes(String(ID))) {
+      selecteds = selecteds.filter((id) => id !== ID);
+    } else {
+      selecteds.push(ID);
+    }
+    setSelectedCategory(selecteds);
+  };
+
+  const RenderCategoryChild = ({ data }) => {
+    return (
+      <div className="ms-2 border-start">
+        {data.map((parent) => {
+          return (
+            <div key={parent._id}>
+              <FormControlLabel
+                value={parent._id}
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={
+                      selectedCategory.includes(parent._id) ? true : false
+                    }
+                    onChange={(e) => selectCategoryHandler(e.target.value)}
+                  />
+                }
+                label={parent.name}
+              />
+
+              {parent.children && (
+                <RenderCategoryChild data={parent.children} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -215,30 +261,16 @@ const CreateMatch = () => {
             </div>
           </Col>
         </Row>
-        <Col xs={6} className="mt-4">
-          <label>دسته بندی :</label>
-          {categories.length && (
-            <div
-              id="treeWrapper"
-              style={{ width: "100%", height: "30rem" }}
-              className="border rounded mt-3"
-            >
-              <Tree
-                data={categories}
-                rootNodeClassName={styles.node__root}
-                branchNodeClassName={styles.node__branch}
-                leafNodeClassName={styles.node__leaf}
-                orientation="vertical"
-                onNodeClick={(node) => setSelectedCategory(node.data)}
-                collapsible={false}
-              />
+        {categories.length > 0 && (
+          <Col xs={6}>
+            <label>انتخاب دسته بندی : </label>
+            <div className="border rounded-3 mt-3 py-2">
+              <FormGroup>
+                <RenderCategoryChild data={categories} />
+              </FormGroup>
             </div>
-          )}
-        </Col>
-        <Col xs={2} className="mt-4">
-          <label>دسته بندی انتخاب شده :</label>
-          <div className="solid_input">{selectedCategory.name}</div>
-        </Col>
+          </Col>
+        )}
         <Col xs={12} className="text-start mt-4">
           <Button
             variant="contained"
