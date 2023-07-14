@@ -237,7 +237,7 @@ const CreateNews = () => {
           </div>
         </Col>
         {categories.length > 0 && (
-          <Col xs={6}>
+          <Col xs={6} className="mt-4">
             <label>انتخاب دسته بندی : </label>
             <div className="border rounded-3 mt-3 py-2">
               <FormGroup>

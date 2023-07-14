@@ -78,7 +78,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                 : undefined,
               item.videos ? item.videos[0] : undefined,
               item.title,
-              item.category,
+              item.category ? item.category[item.category.length - 1] : undefined,
               item.createdAt
             )
           );
@@ -282,7 +282,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                   <div>
                     <h5>دسته بندی :</h5>
                     <h6 style={{ margin: "0" }}>
-                      {selectedItem.category.name}
+                      {selectedItem.category[selectedItem.category.length - 1].name}
                     </h6>
                   </div>
                   <hr />
@@ -344,6 +344,11 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
             >
               <TableCell align="right">{row.name}</TableCell>
               <TableCell align="center">
+                <Link to={`${row._id}`}>
+                  <Button variant="contained" color="warning" className="mx-2">
+                    ویرایش
+                  </Button>
+                </Link>
                 <Button
                   variant="contained"
                   color="error"

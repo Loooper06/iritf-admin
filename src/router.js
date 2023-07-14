@@ -30,6 +30,7 @@ import EditCommittee from "./pages/committees/EditCommittee.jsx";
 import EditReport from "./pages/image_reports/EditReport.jsx";
 import CreateCategory from "./pages/category/CreateCtegory.jsx";
 import CategoriesList from "./pages/category/CategoriesList.jsx";
+import EditCategory from "./pages/category/EditCategory.jsx";
 
 const router = [
   { path: "/", element: <Home /> },
@@ -107,6 +108,11 @@ const router = [
   },
   { path: "/category/create", element: <CreateCategory /> },
   { path: "/category/list", element: <CategoriesList /> },
+  {
+    path: "/category/list",
+    element: <EditCategory/>,
+    children: [{ path: ":id" }],
+  },
 ];
 
 export default router;
