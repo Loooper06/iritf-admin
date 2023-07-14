@@ -92,7 +92,7 @@ const CreateClub = () => {
         const Data = new FormData();
         Data.append("title", title);
         for (const category of selectedCategory) {
-          Data.append("category", category);
+          Data.append("category[]", category);
         }
         Data.append("text", text);
         Data.append("siteLink", webSiteLink);

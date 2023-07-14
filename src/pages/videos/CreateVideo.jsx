@@ -93,7 +93,7 @@ const CreateVideo = () => {
         }
 
         for (const category of selectedCategory) {
-          Data.append("category", category);
+          Data.append("category[]", category);
         }
         const createResult = await axios
           .post("/admin/videos/create", Data, {

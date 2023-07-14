@@ -88,7 +88,7 @@ const CreateCommittee = () => {
         const Data = new FormData();
         Data.append("title", title);
         for (const category of selectedCategory) {
-          Data.append("category", category);
+          Data.append("category[]", category);
         }
 
         for (const image of images) {

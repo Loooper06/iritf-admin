@@ -104,7 +104,7 @@ const Home = () => {
         axios.get("/admin/videos/list"),
         axios.get("/admin/committees/list"),
         axios.get("/admin/matches/list"),
-        // axios.get('/admin/clubs/list'),
+        axios.get("/admin/clubs/list"),
         axios.get("/admin/reports/list"),
       ])
       .then(

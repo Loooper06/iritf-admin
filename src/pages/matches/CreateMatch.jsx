@@ -98,7 +98,7 @@ const CreateMatch = () => {
         const Data = new FormData();
         Data.append("title", title);
         for (const category of selectedCategory) {
-          Data.append("category", category);
+          Data.append("category[]", category);
         }
         Data.append("description", description);
         Data.append("expireDate", expireDate.toDate?.().toString());
