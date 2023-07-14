@@ -55,7 +55,8 @@ const EditCalendar = () => {
     if (getResult.statusCode === 200) {
       const { title, category, tags } = getResult.data.calendar;
       setTitle(title);
-      setSelectedCategory(category);
+      const calendarCategories = category.map((item) => item._id);
+      setSelectedCategory(calendarCategories);
       setTags(tags);
     } else
       Swal.fire({

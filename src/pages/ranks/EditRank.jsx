@@ -10,9 +10,9 @@ import {
   FormControlLabel,
   FormGroup,
 } from "@mui/material";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
 const EditRank = () => {
   const [title, setTitle] = useState("");
@@ -26,7 +26,7 @@ const EditRank = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get('/admin/category/parents', {
+      .get("/admin/category/parents", {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -45,7 +45,6 @@ const EditRank = () => {
   }
 
   async function getNews() {
-
     const getResult = await axios
       .get(`/admin/ranks/list/${id}`, {
         withCredentials: true,
@@ -58,8 +57,9 @@ const EditRank = () => {
       setTitle(title);
       setTags(tags);
       setImage(image);
-      setFiles(files)
-      setSelectedCategory(category);
+      setFiles(files);
+      const rankCategories = category.map((item) => item._id);
+      setSelectedCategory(rankCategories);
     } else
       Swal.fire({
         text: getResult.message,
@@ -127,9 +127,10 @@ const EditRank = () => {
             Data.append("files", img);
           }
         }
-        
-        for (const file of files) {
-          Data.append("files", file);
+        if (files.length > 0) {
+          for (const file of files) {
+            Data.append("files", file);
+          }
         }
 
         const createResult = await axios
@@ -243,7 +244,7 @@ const EditRank = () => {
           </div>
         </Col>
         <Col xs={12}>
-          <Col xs={3} style={{"margin":"20px 0"}}>
+          <Col xs={3} style={{ margin: "20px 0" }}>
             <Form.Label htmlFor="ranksFiles">فایل رنکینگ (pdf.) :</Form.Label>
             <Form.Control
               type="file"
@@ -275,7 +276,7 @@ const EditRank = () => {
           >
             ویرایش رنکینگ
           </Button>
-          <Link to={'/ranks/list'}>
+          <Link to={"/ranks/list"}>
             <Button
               variant="contained"
               className="mx-3"
