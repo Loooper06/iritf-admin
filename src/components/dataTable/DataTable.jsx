@@ -35,8 +35,8 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
     arrows: false,
   };
 
-  function createData(_id, image, videos, title, category, createdAt) {
-    return { _id, image, videos, title, category, createdAt };
+  function createData(_id, image, videos, title, text, category, createdAt) {
+    return { _id, image, videos, title, text, category, createdAt };
   }
 
   function createDataForCategory(_id, name) {
@@ -78,6 +78,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                 : undefined,
               item.videos ? item.videos[0] : undefined,
               item.title,
+              // item?.text || "",
               item.category
                 ? item.category[item.category.length - 1]
                 : undefined,
@@ -85,14 +86,12 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
             )
           );
         });
-        console.log(rows);
       } else if (origin === "categories") {
         data.map((item) => {
           rows.push(createDataForCategory(item._id, item.name));
         });
       } else if (origin === "registrations") {
         data.map((item) => {
-          console.log(item);
           rows.push(
             createDataForRegistrations(
               item._id,
@@ -325,7 +324,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                         style={{ marginBottom: "16px", lineHeight: "1.8" }}
                         className="text"
                       >
-                        <h5>متن خبر :</h5>
+                        <h5>متن :</h5>
                         <div
                           style={{ marginTop: "12px" }}
                           dangerouslySetInnerHTML={{

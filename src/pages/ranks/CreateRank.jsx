@@ -118,6 +118,8 @@ const CreateRank = () => {
             text: createResult.data.message,
             icon: "success",
           });
+          setFiles([]);
+          setImage([]);
         } else {
           Swal.fire({
             text: createResult.message,
