@@ -78,7 +78,9 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                 : undefined,
               item.videos ? item.videos[0] : undefined,
               item.title,
-              item.category ? item.category[item.category.length - 1] : undefined,
+              item.category
+                ? item.category[item.category.length - 1]
+                : undefined,
               item.createdAt
             )
           );
@@ -282,7 +284,10 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
                   <div>
                     <h5>دسته بندی :</h5>
                     <h6 style={{ margin: "0" }}>
-                      {selectedItem.category[selectedItem.category.length - 1].name}
+                      {
+                        selectedItem.category[selectedItem.category.length - 1]
+                          .name
+                      }
                     </h6>
                   </div>
                   <hr />
@@ -558,7 +563,7 @@ export default function DataTable({ data, origin, faOrigin, deleteHandler }) {
           className="d-flex justify-content-center align-items-center"
           style={{ minHeight: "150px" }}
         >
-          <h2 className="text-info">اطلاعاتی یافت نشد :(</h2>
+          <h2 className="text-info">اطلاعاتی یافت نشد !</h2>
         </div>
       )}
     </TableContainer>

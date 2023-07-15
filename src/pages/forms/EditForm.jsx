@@ -10,9 +10,11 @@ import {
   FormControlLabel,
   FormGroup,
 } from "@mui/material";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const EditForm = () => {
   const [categories, setCategories] = useState([]);
@@ -21,12 +23,13 @@ const EditForm = () => {
   const [tags, setTags] = useState([]);
   const [images, setImages] = useState([]);
   const [files, setFiles] = useState([]);
+  const [text, setText] = useState([]);
 
   const { id } = useParams();
 
   async function getCategories() {
     const getResult = await axios
-      .get('/admin/category/parents', {
+      .get("/admin/category/parents", {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -45,7 +48,6 @@ const EditForm = () => {
   }
 
   async function getForm() {
-
     const getResult = await axios
       .get(`/admin/forms/list/${id}`, {
         withCredentials: true,
@@ -54,7 +56,7 @@ const EditForm = () => {
       .catch((err) => err.response);
 
     if (getResult.statusCode === 200) {
-      const { title, category, tags} = getResult.data.form;
+      const { title, category, tags } = getResult.data.form;
       setTitle(title);
       setSelectedCategory(category);
       setTags(tags);
@@ -114,6 +116,7 @@ const EditForm = () => {
       if (result.isConfirmed) {
         const Data = new FormData();
         Data.append("title", title);
+        Data.append("text", text);
         Data.append("tags", tags);
         for (const category of selectedCategory) {
           Data.append("category[]", category);
@@ -128,10 +131,14 @@ const EditForm = () => {
         }
 
         const createResult = await axios
-          .patch(`${process.env.REACT_APP_API_URL}/admin/forms/update/${id}`, Data, {
-            withCredentials: true,
-            headers: { "Content-Type": "multipart/form-data" },
-          })
+          .patch(
+            `${process.env.REACT_APP_API_URL}/admin/forms/update/${id}`,
+            Data,
+            {
+              withCredentials: true,
+              headers: { "Content-Type": "multipart/form-data" },
+            }
+          )
           .then((res) => res.data)
           .catch((err) => err.response.data);
 
@@ -237,18 +244,29 @@ const EditForm = () => {
             ))}
           </div>
         </Col>
-        <Col xs={12}>
-          <Col xs={3} style={{ margin: "20px 0" }}>
-            <Form.Label htmlFor="fromsFiles">فایل فرم (pdf.) :</Form.Label>
-            <Form.Control
-              type="file"
-              accept=".pdf"
-              id="fromsFiles"
-              className="mt-1"
-              multiple
-              onChange={(e) => setFiles(e.target.files)}
+        <Col xs={3} style={{ margin: "20px 0" }}>
+          <Form.Label htmlFor="fromsFiles">فایل فرم (pdf.) :</Form.Label>
+          <Form.Control
+            type="file"
+            accept=".pdf"
+            id="fromsFiles"
+            className="mt-1"
+            multiple
+            onChange={(e) => setFiles(e.target.files)}
+          />
+        </Col>
+        <Col xs={8} className="mt-4">
+          <label>توضیحات :</label>
+          <div className="mt-2">
+            <CKEditor
+              editor={ClassicEditor}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                const plainText = data.replace(/<[^>]+>/g, "");
+                setText(plainText);
+              }}
             />
-          </Col>
+          </div>
         </Col>
         {categories.length > 0 && (
           <Col xs={6}>
@@ -269,7 +287,7 @@ const EditForm = () => {
           >
             ویرایش فرم
           </Button>
-          <Link to={'/forms/list'}>
+          <Link to={"/forms/list"}>
             <Button
               variant="contained"
               className="mx-3"

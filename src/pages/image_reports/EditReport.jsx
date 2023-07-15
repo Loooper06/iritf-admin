@@ -10,9 +10,11 @@ import {
   FormControlLabel,
   FormGroup,
 } from "@mui/material";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const EditReport = () => {
   const [categories, setCategories] = useState([]);
@@ -20,12 +22,13 @@ const EditReport = () => {
   const [title, setTitle] = useState("");
   const [images, setImages] = useState([]);
   const [tags, setTags] = useState([]);
+  const [text, setText] = useState([]);
 
   const { id } = useParams();
 
   async function getCategories() {
     const getResult = await axios
-      .get('/admin/category/parents', {
+      .get("/admin/category/parents", {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -44,7 +47,6 @@ const EditReport = () => {
   }
 
   async function getReport() {
-
     const getResult = await axios
       .get(`/admin/reports/list/${id}`, {
         withCredentials: true,
@@ -242,6 +244,19 @@ const EditReport = () => {
             </div>
           </Col>
         )}
+        <Col xs={6} className="mt-4">
+          <label>توضیحات :</label>
+          <div className="mt-2">
+            <CKEditor
+              editor={ClassicEditor}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                const plainText = data.replace(/<[^>]+>/g, "");
+                setText(plainText);
+              }}
+            />
+          </div>
+        </Col>
         <Col xs={12} className="text-start mt-4">
           <Button
             variant="contained"
@@ -251,7 +266,7 @@ const EditReport = () => {
           >
             ویرایش گزارش
           </Button>
-          <Link to={'/reports/list'}>
+          <Link to={"/reports/list"}>
             <Button
               variant="contained"
               className="mx-3"

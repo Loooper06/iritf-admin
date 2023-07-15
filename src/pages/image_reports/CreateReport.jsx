@@ -10,6 +10,8 @@ import {
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const CreateReport = () => {
   const [categories, setCategories] = useState([]);
@@ -17,6 +19,7 @@ const CreateReport = () => {
   const [title, setTitle] = useState("");
   const [images, setImages] = useState([]);
   const [tags, setTags] = useState([]);
+  const [text, setText] = useState([]);
 
   const tagInput = useRef();
 
@@ -86,6 +89,7 @@ const CreateReport = () => {
       if (result.isConfirmed) {
         const Data = new FormData();
         Data.append("title", title);
+        Data.append("text", text);
         for (const category of selectedCategory) {
           Data.append("category[]", category);
         }
@@ -216,6 +220,19 @@ const CreateReport = () => {
             </div>
           </Col>
         )}
+        <Col xs={6} className="mt-4">
+          <label>توضیحات :</label>
+          <div className="mt-2">
+            <CKEditor
+              editor={ClassicEditor}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                const plainText = data.replace(/<[^>]+>/g, "");
+                setText(plainText);
+              }}
+            />
+          </div>
+        </Col>
         <Col xs={12} className="text-start mt-4">
           <Button
             variant="contained"

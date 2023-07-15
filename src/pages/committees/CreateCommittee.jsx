@@ -10,6 +10,8 @@ import {
 import SectionTitle from "../../components/SectionTitle/SectionTitle";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const CreateCommittee = () => {
   const [categories, setCategories] = useState([]);
@@ -18,6 +20,7 @@ const CreateCommittee = () => {
   const [images, setImages] = useState([]);
   const [files, setFiles] = useState([]);
   const [tags, setTags] = useState([]);
+  const [text, setText] = useState([]);
 
   const tagInput = useRef();
 
@@ -87,6 +90,7 @@ const CreateCommittee = () => {
       if (result.isConfirmed) {
         const Data = new FormData();
         Data.append("title", title);
+        Data.append("text", text);
         for (const category of selectedCategory) {
           Data.append("category[]", category);
         }
@@ -211,20 +215,29 @@ const CreateCommittee = () => {
             ))}
           </div>
         </Col>
-        <Col xs={12}>
-          <Col xs={3} style={{ margin: "20px 0" }}>
-            <Form.Label htmlFor="committeesFiles">
-              فایل کمیته (pdf.) :
-            </Form.Label>
-            <Form.Control
-              type="file"
-              accept=".pdf"
-              id="committeesFiles"
-              className="mt-1"
-              multiple
-              onChange={(e) => setFiles(e.target.files)}
+        <Col xs={3} style={{ margin: "20px 0" }}>
+          <Form.Label htmlFor="committeesFiles">فایل کمیته (pdf.) :</Form.Label>
+          <Form.Control
+            type="file"
+            accept=".pdf"
+            id="committeesFiles"
+            className="mt-1"
+            multiple
+            onChange={(e) => setFiles(e.target.files)}
+          />
+        </Col>
+        <Col xs={8} className="mt-4">
+          <label>توضیحات :</label>
+          <div className="mt-2">
+            <CKEditor
+              editor={ClassicEditor}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                const plainText = data.replace(/<[^>]+>/g, "");
+                setText(plainText);
+              }}
             />
-          </Col>
+          </div>
         </Col>
         {categories.length > 0 && (
           <Col xs={6}>

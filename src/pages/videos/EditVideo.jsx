@@ -10,9 +10,11 @@ import {
   FormControlLabel,
   FormGroup,
 } from "@mui/material";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const EditVideo = () => {
   const [categories, setCategories] = useState([]);
@@ -20,9 +22,9 @@ const EditVideo = () => {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState([]);
   const [files, setFiles] = useState([]);
+  const [text, setText] = useState([]);
 
   const { id } = useParams();
-
 
   async function getCategories() {
     const getResult = await axios
@@ -45,7 +47,6 @@ const EditVideo = () => {
   }
 
   async function getVideo() {
-
     const getResult = await axios
       .get(`/admin/videos/list/${id}`, {
         withCredentials: true,
@@ -113,6 +114,7 @@ const EditVideo = () => {
       if (result.isConfirmed) {
         const Data = new FormData();
         Data.append("title", title);
+        Data.append("text", text);
         Data.append("tags", tags);
 
         for (const category of selectedCategory) {
@@ -245,6 +247,19 @@ const EditVideo = () => {
             </div>
           </Col>
         )}
+        <Col xs={6} className="mt-4">
+          <label>توضیحات :</label>
+          <div className="mt-2">
+            <CKEditor
+              editor={ClassicEditor}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                const plainText = data.replace(/<[^>]+>/g, "");
+                setText(plainText);
+              }}
+            />
+          </div>
+        </Col>
         <Col xs={12} className="text-start mt-4">
           <Button
             variant="contained"
@@ -254,7 +269,7 @@ const EditVideo = () => {
           >
             ویرایش ویدیو
           </Button>
-          <Link to={'/videos/list'}>
+          <Link to={"/videos/list"}>
             <Button
               variant="contained"
               className="mx-3"

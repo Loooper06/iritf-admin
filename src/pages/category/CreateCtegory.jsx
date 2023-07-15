@@ -7,21 +7,23 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import Tree from "react-d3-tree";
 
-
 const CreateCategory = () => {
   const [parentCategories, setParentCategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState({});
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState("");
   const [name, setName] = useState("");
 
   const handleChange = (e) => {
+    if (e.target.value === "") {
+      setSelectedCategory("");
+    }
     setSelectedOption(e.target.value);
   };
 
   async function getParentCategories() {
     const getResult = await axios
-      .get('/admin/category/list-of-all', {
+      .get("/admin/category/list-of-all", {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -41,7 +43,7 @@ const CreateCategory = () => {
 
   async function getCategories() {
     const getResult = await axios
-      .get('/admin/category/parents', {
+      .get("/admin/category/parents", {
         withCredentials: true,
       })
       .then((res) => res.data)
@@ -49,7 +51,7 @@ const CreateCategory = () => {
 
     if (getResult.statusCode === 200) {
       const findedCategory = getResult.data.parents.filter((item) => {
-        if (item.name === selectedOption &&  item.parent === null) return item;
+        if (item.name === selectedOption && item.parent === null) return item;
       });
       setCategories(findedCategory);
     } else
@@ -61,7 +63,7 @@ const CreateCategory = () => {
 
   useEffect(() => {
     getParentCategories();
-  },[]);
+  }, []);
 
   useEffect(() => {
     getCategories();
@@ -85,7 +87,7 @@ const CreateCategory = () => {
         }
 
         const createResult = await axios
-          .post('/admin/category/add', Data, {
+          .post("/admin/category/add", Data, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
           })
@@ -97,6 +99,7 @@ const CreateCategory = () => {
             text: createResult.data.message,
             icon: "success",
           });
+          await getCategories();
         } else {
           Swal.fire({
             text: createResult.message,

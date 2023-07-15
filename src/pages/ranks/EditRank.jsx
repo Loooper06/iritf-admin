@@ -13,12 +13,15 @@ import {
 import { Link } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const EditRank = () => {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState([]);
   const [image, setImage] = useState([]);
   const [files, setFiles] = useState([]);
+  const [text, setText] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
 
@@ -44,7 +47,7 @@ const EditRank = () => {
       });
   }
 
-  async function getNews() {
+  async function getRanks() {
     const getResult = await axios
       .get(`/admin/ranks/list/${id}`, {
         withCredentials: true,
@@ -53,10 +56,11 @@ const EditRank = () => {
       .catch((err) => err.response);
 
     if (getResult.statusCode === 200) {
-      const { title, tags, image, files, category } = getResult.data.rank;
+      const { title, tags, image, files, category, text } = getResult.data.rank;
       setTitle(title);
       setTags(tags);
       setImage(image);
+      setText(text);
       setFiles(files);
       const rankCategories = category.map((item) => item._id);
       setSelectedCategory(rankCategories);
@@ -71,7 +75,7 @@ const EditRank = () => {
 
   useEffect(() => {
     getCategories();
-    getNews();
+    getRanks();
   }, []);
 
   const addTagHandler = (event) => {
@@ -116,6 +120,7 @@ const EditRank = () => {
       if (result.isConfirmed) {
         const Data = new FormData();
         Data.append("title", title);
+        Data.append("text", text);
         Data.append("tags", tags);
 
         for (const category of selectedCategory) {
@@ -243,19 +248,31 @@ const EditRank = () => {
             ))}
           </div>
         </Col>
-        <Col xs={12}>
-          <Col xs={3} style={{ margin: "20px 0" }}>
-            <Form.Label htmlFor="ranksFiles">فایل رنکینگ (pdf.) :</Form.Label>
-            <Form.Control
-              type="file"
-              accept=".pdf"
-              id="ranksFiles"
-              className="mt-1"
-              files={files}
-              multiple
-              onChange={(e) => setFiles(e.target.files)}
+        <Col xs={3} style={{ margin: "20px 0" }}>
+          <Form.Label htmlFor="ranksFiles">فایل رنکینگ (pdf.) :</Form.Label>
+          <Form.Control
+            type="file"
+            accept=".pdf"
+            id="ranksFiles"
+            className="mt-1"
+            files={files}
+            multiple
+            onChange={(e) => setFiles(e.target.files)}
+          />
+        </Col>
+        <Col xs={8} className="mt-4">
+          <label>توضیحات :</label>
+          <div className="mt-2">
+            <CKEditor
+              editor={ClassicEditor}
+              data={text}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                const plainText = data.replace(/<[^>]+>/g, "");
+                setText(plainText);
+              }}
             />
-          </Col>
+          </div>
         </Col>
         {categories.length > 0 && (
           <Col xs={6} className="mt-4">
